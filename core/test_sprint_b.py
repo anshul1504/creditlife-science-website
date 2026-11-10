@@ -569,3 +569,10 @@ class AccountAndInventoryTests(Base):
             self.assertIn(label, html)
         self.assertEqual(self.client.get(reverse("inventory")).status_code, 200)
         self.assertEqual(self.client.get("/admin/core/stockmovement/").status_code, 200)
+
+    def test_an_account_without_a_profile_is_repaired_and_the_account_page_opens(self):
+        from core.models import Profile
+        user = self.sign_in_user("noprofile@example.com")
+        Profile.objects.filter(user=user).delete()
+        user.save()  # the signal recreates it
+        self.assertEqual(self.client.get(reverse("account")).status_code, 200)

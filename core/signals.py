@@ -11,7 +11,8 @@ from .models import Batch, Order, Profile, ProductQuestion, ReturnRequest, SiteS
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
+    # on every save, not only the first: it also repairs an account that somehow has no profile
+    if created or not Profile.objects.filter(user=instance).exists():
         Profile.objects.get_or_create(user=instance)
 
 
