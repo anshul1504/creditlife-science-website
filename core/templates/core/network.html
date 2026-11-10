@@ -34,29 +34,48 @@
       {% for key, label in statuses %}<button type="button" class="net-chip net-{{ key }}" data-net-filter="{{ key }}"><i></i>{{ label }} ({% if key == 'active' %}{{ counts.active }}{% elif key == 'open' %}{{ counts.open }}{% else %}{{ counts.upcoming }}{% endif %})</button>{% endfor %}
     </div>
 
-    <div class="dist-grid" id="netGrid" aria-live="polite">
-      {% for d in districts %}
-      <article class="dist-card net-{{ d.status }}" data-status="{{ d.status }}">
-        <header>
-          <span class="dist-icon"><i class="bi bi-geo-alt-fill"></i></span>
-          <div><h3>{{ d.name }}</h3><span class="dist-state">{{ d.state }}</span></div>
-          <span class="dist-tag">{{ d.get_status_display }}</span>
-        </header>
-        {% if d.entries %}
-        <ul class="dist-list">
-          {% for e in d.entries %}
-          <li><b>{{ e.firm_name }}</b>{% if e.address %}<span>{{ e.address }}</span>{% endif %}{% if e.contact_person %}<span>{{ e.contact_person }}</span>{% endif %}{% if e.mobile %}<a href="tel:{{ e.mobile }}"><i class="bi bi-telephone"></i> {{ e.mobile }}</a>{% endif %}</li>
+    <div id="netGrid" aria-live="polite">
+      <div class="org">
+        <div class="org-root"><div class="org-node org-company"><div class="org-head">Credit Lifesciences</div><div class="org-body"><b>Serving Health</b><span>{{ SITE.address }}</span></div></div></div>
+        {% if documented %}
+        <ul class="org-branches" style="--cols: {{ branch_cols }}">
+          {% for d in documented %}
+          <li class="org-branch org-district" data-status="{{ d.status }}">
+            <div class="org-node org-dist"><div class="org-head">District</div><div class="org-body"><b>{{ d.name }}</b><span>{{ d.state }}</span><em class="org-tag">{{ d.get_status_display }}</em></div></div>
+            <ol class="org-chain">
+              {% for e in d.entries %}
+              <li>
+                <span class="org-arrow" aria-hidden="true"><i class="bi bi-arrow-down"></i></span>
+                <div class="org-node org-firm">
+                  <div class="org-head">{{ e.firm_name }}</div>
+                  <div class="org-body">
+                    {% if e.address %}<span><i class="bi bi-geo-alt"></i> {{ e.address }}</span>{% endif %}
+                    {% if e.contact_person %}<span><i class="bi bi-person"></i> {{ e.contact_person }}</span>{% endif %}
+                    {% if e.mobile %}<span><i class="bi bi-telephone"></i> {% for num in e.mobile_list %}<a href="tel:{{ num }}">{{ num }}</a>{% if not forloop.last %} / {% endif %}{% endfor %}</span>{% endif %}
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+            </ol>
+          </li>
           {% endfor %}
         </ul>
-        {% else %}
-        <p class="dist-empty"><i class="bi bi-hourglass-split"></i> Distributor details coming soon</p>
         {% endif %}
-      </article>
-      {% empty %}
-      <p class="text-muted">District details will be published shortly.</p>
-      {% endfor %}
+      </div>
+
+      {% if pending %}
+      <div class="org org-more">
+        <div class="org-root"><div class="org-node org-company org-sub"><div class="org-head">More districts</div><div class="org-body"><b>{{ pending|length }} district{{ pending|length|pluralize }}</b><span>Distributor details coming soon</span></div></div></div>
+        <ul class="org-grid">
+          {% for d in pending %}
+          <li class="org-district" data-status="{{ d.status }}"><div class="org-node org-dist"><div class="org-head">{{ d.get_status_display }}</div><div class="org-body"><b>{{ d.name }}</b><span>{{ d.state }}</span></div></div></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if not districts %}<p class="text-muted">District details will be published shortly.</p>{% endif %}
     </div>
-    <p class="small text-muted mt-4">Locations are shown as cards rather than a geographic map. Statuses are updated by Credit Lifesciences as appointments change. Distributor contact details are published only with the distributor's consent.</p>
+    <p class="small text-muted mt-4">Statuses are updated by Credit Lifesciences as appointments change. Distributor contact details are published only with the distributor's consent.</p>
   </div>
 </section>
 

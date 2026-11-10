@@ -1110,6 +1110,10 @@ class DistributorListing(models.Model):
     def visible(self):
         return self.consent_given and self.is_published
 
+    @property
+    def mobile_list(self):
+        return [n.strip() for n in self.mobile.replace(",", "/").split("/") if n.strip()]
+
 
 class HeroSlide(models.Model):
     """One rotating full-screen slide at the top of the home page (managed in the admin)."""

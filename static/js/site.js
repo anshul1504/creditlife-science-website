@@ -573,7 +573,7 @@ document.addEventListener('click', function (e) {
     chip.addEventListener('click', function () {
       var want = chip.getAttribute('data-net-filter');
       chips.forEach(function (c) { c.classList.toggle('on', c === chip); });
-      grid.querySelectorAll('.dist-card').forEach(function (t) { t.hidden = want !== 'all' && t.dataset.status !== want; });
+      grid.querySelectorAll('.dist-card, .org-district').forEach(function (t) { t.hidden = want !== 'all' && t.dataset.status !== want; });
     });
   });
 })();

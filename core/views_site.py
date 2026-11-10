@@ -25,8 +25,10 @@ def network(request):
     for d in districts:
         d.entries = [row for row in listings if row.district.lower() == d.name.lower()]
     counts = {key: sum(1 for d in districts if d.status == key) for key, _ in District.Status.choices}
+    documented = [d for d in districts if d.entries]
     return render(request, "core/network.html", {
-        "districts": districts, "statuses": District.Status.choices, "counts": counts, "listings": listings,
+        "districts": districts, "documented": documented, "pending": [d for d in districts if not d.entries],
+        "branch_cols": min(max(len(documented), 1), 5), "statuses": District.Status.choices, "counts": counts, "listings": listings,
     })
 
 

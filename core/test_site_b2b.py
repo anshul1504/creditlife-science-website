@@ -53,6 +53,16 @@ class DistributorTests(Base):
 
 
 class NetworkTests(Base):
+    def test_consented_distributors_appear_in_the_org_chart_under_their_district(self):
+        DistributorListing.objects.create(firm_name="Chart Pharma", contact_person="Ravi", mobile="9000000011 / 9000000012", district="Lucknow", address="Aminabad", consent_given=True, is_published=True)
+        r = self.client.get(reverse("network"))
+        html = r.content.decode()
+        self.assertIn("org-branch", html)
+        self.assertIn("Chart Pharma", html)
+        self.assertIn('href="tel:9000000012"', html)
+        self.assertEqual([d.name for d in r.context["documented"]], ["Lucknow"])
+        self.assertEqual(len(r.context["pending"]), 19)
+
     def test_the_twenty_districts_are_loaded(self):
         self.assertEqual(District.objects.count(), 20)
         html = self.client.get(reverse("network")).content.decode()
