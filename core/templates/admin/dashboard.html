@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; Sales dashboard</div>{% endblock %}
+{% block content %}
+<style>
+  .dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+  .dash .k{background:var(--body-bg,#fff);border:1px solid var(--hairline-color,#ddd);border-radius:10px;padding:14px 16px}
+  .dash .k small{display:block;color:var(--body-quiet-color,#666)}
+  .dash .k b{font-size:1.6rem}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .bars{display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1px solid var(--hairline-color,#ddd)}
+  .bars i{flex:1;background:#0e7a55;min-height:2px;border-radius:2px 2px 0 0}
+  table.dt{width:100%}
+</style>
+<p>Last
+  <a href="?days=7">7 days</a> &middot; <a href="?days=30">30 days</a> &middot; <a href="?days=90">90 days</a> &middot; <a href="?days=365">1 year</a>
+  &mdash; showing {{ d.days }} days. Cancelled orders and unpaid online orders are left out.</p>
+
+<div class="dash">
+  <div class="k"><small>Revenue</small><b>&#8377;{{ d.revenue }}</b></div>
+  <div class="k"><small>Orders</small><b>{{ d.orders }}</b></div>
+  <div class="k"><small>Average order value</small><b>&#8377;{{ d.aov }}</b></div>
+  <div class="k"><small>Customers</small><b>{{ d.customers }}</b></div>
+  <div class="k"><small>Repeat customers</small><b>{{ d.repeat_rate }}%</b></div>
+  <div class="k"><small>Discounts given</small><b>&#8377;{{ d.discounts }}</b></div>
+</div>
+
+<h2 class="dh">Daily revenue</h2>
+<div class="bars" aria-label="Daily revenue">{% for s in d.series %}<i style="height:{{ s.pct }}%" title="{{ s.day|date:'d M' }}: &#8377;{{ s.rev }} ({{ s.orders }} orders)"></i>{% endfor %}</div>
+
+<div class="cols">
+  <div>
+    <h2 class="dh">Needs attention</h2>
+    <table class="dt">
+      <tr><td>New orders to confirm</td><td><a href="{% url 'admin:core_order_changelist' %}?status__exact=placed">{{ d.todo.new_orders }}</a></td></tr>
+      <tr><td>Open return requests</td><td><a href="{% url 'admin:core_returnrequest_changelist' %}?status__exact=requested">{{ d.todo.returns }}</a></td></tr>
+      <tr><td>Enquiries not handled</td><td><a href="{% url 'admin:core_enquiry_changelist' %}?handled__exact=0">{{ d.todo.enquiries }}</a></td></tr>
+      {% for p in d.todo.low_stock %}<tr><td>Low stock: {{ p.name }}</td><td><a href="{% url 'admin:core_product_change' p.pk %}">{{ p.available_qty }} left</a></td></tr>{% endfor %}
+    </table>
+  </div>
+  <div>
+    <h2 class="dh">Top products</h2>
+    <table class="dt">
+      <thead><tr><th>Product</th><th>Units</th><th>Sales</th></tr></thead>
+      {% for t in d.top %}<tr><td>{{ t.product_name }}</td><td>{{ t.units }}</td><td>&#8377;{{ t.sales }}</td></tr>{% empty %}<tr><td colspan="3">No sales in this period.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div>
+    <h2 class="dh">Order status</h2>
+    <table class="dt">{% for label, n in d.statuses %}<tr><td>{{ label }}</td><td>{{ n }}</td></tr>{% endfor %}</table>
+    <h2 class="dh">Payment mix</h2>
+    <table class="dt">{% for label, n in d.payments %}<tr><td>{{ label }}</td><td>{{ n }}</td></tr>{% endfor %}</table>
+  </div>
+</div>
+{% endblock %}

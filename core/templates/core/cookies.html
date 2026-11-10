@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% block title %}Cookie Policy | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Cookie policy</h1></div></section>
+<section class="section pt-4"><div class="container legal">
+  {% include "core/_draft_notice.html" %}
+  <p>We use only the cookies the shop needs to work. We do not use advertising or tracking cookies.</p>
+  <div class="table-responsive"><table class="table">
+    <thead><tr><th>Cookie</th><th>Purpose</th><th>Lasts</th></tr></thead>
+    <tbody>
+      <tr><td>sessionid</td><td>Keeps your cart and sign-in</td><td>Until you sign out or up to 2 weeks</td></tr>
+      <tr><td>csrftoken</td><td>Protects forms from forgery</td><td>1 year</td></tr>
+      <tr><td>cl_cookie_ok (stored in your browser)</td><td>Remembers that you have read this notice</td><td>1 year</td></tr>
+    </tbody>
+  </table></div>
+  <p>If we add analytics or marketing tools later, we will ask for your consent first. See also our <a href="{% url 'privacy' %}">Privacy policy</a>.</p>
+</div></section>
+{% endblock %}

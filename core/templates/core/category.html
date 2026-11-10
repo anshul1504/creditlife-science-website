@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load core_extras %}
+{% block title %}{{ page.heading }} | Credit Lifesciences{% endblock %}
+{% block description %}{{ page.meta_description|default:page.intro }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'products' %}">Shop</a></li><li class="breadcrumb-item active">{{ page.get_category_display }}</li></ol></nav>
+    <h1>{{ page.heading }}</h1>
+    {% if page.intro %}<p>{{ page.intro }}</p>{% endif %}
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    {% if products %}
+    <div class="row g-4">{% for p in products %}<div class="col-sm-6 col-lg-3">{% include "core/_product_card.html" %}</div>{% endfor %}</div>
+    {% else %}
+    <p class="text-muted">Products in this range are coming soon.</p>
+    {% endif %}
+    {% if page.body %}<div class="legal content-copy mt-5">{{ page.body|rich }}</div>{% endif %}
+    {% if others %}<div class="mt-5 d-flex flex-wrap gap-2"><span class="muted-label align-self-center">Also explore</span>{% for o in others %}<a class="chip" href="{{ o.get_absolute_url }}">{{ o.get_category_display }}</a>{% endfor %}</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

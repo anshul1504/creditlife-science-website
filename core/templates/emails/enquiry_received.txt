@@ -1,0 +1,11 @@
+{% autoescape off %}Hi {{ enquiry.name }},
+
+Thank you for contacting Credit Lifesciences. A member of our team will call you back on {{ enquiry.phone }} shortly.
+{% if enquiry.message %}
+Your message:
+{{ enquiry.message }}
+{% endif %}
+If your question is urgent, call us on {{ SITE.phones.0.0 }}.
+
+Credit Lifesciences
+{{ SITE.email }}{% endautoescape %}

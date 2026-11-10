@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Thank you for your interest</h1>
+<p>Hi {{ enq.full_name }},</p>
+<p>We have received the distributor enquiry for <b>{{ enq.firm_name }}</b> ({{ enq.district }}, {{ enq.state }}). Our team will contact you on {{ enq.mobile }} to discuss it.</p>
+<p style="font-size:13px;color:#667385;">Submitting the form does not automatically grant an authorised distributorship.</p>
+{% endblock %}

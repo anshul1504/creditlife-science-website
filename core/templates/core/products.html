@@ -1,0 +1,161 @@
+{% extends "core/base.html" %}
+{% load static core_extras %}
+{% block title %}Shop{% if page.number > 1 %} - page {{ page.number }}{% endif %} | Credit Lifesciences{% endblock %}
+{% block description %}Credit Lifesciences product portfolio: Ayurvedic and Allopathic products with composition, pack size and MRP. Request the product catalogue.{% endblock %}
+{% block body_class %}page-shop{% endblock %}
+{% block content %}
+<section class="shop-head">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Shop</li></ol></nav>
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+      <div>
+        <h1>Our products</h1>
+        <p>Ayurvedic and Allopathic products. <a href="{% url 'contact' %}?topic=product">Request our product catalogue</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shop">
+  <div class="container">
+    <div class="row g-4 g-xl-5">
+      <!-- ============ Filters: sticky sidebar on desktop, slide-in drawer on mobile ============ -->
+      <div class="col-lg-3">
+        <aside class="offcanvas-lg offcanvas-start filter-panel" tabindex="-1" id="filterPanel" aria-labelledby="filterTitle">
+          <div class="offcanvas-header">
+            <h2 class="offcanvas-title h5" id="filterTitle">Filters</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#filterPanel" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <form method="get" id="filterForm" data-filters>
+              {% if sort != 'popular' %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+              <div class="f-top d-none d-lg-flex"><b>Filters</b>{% if chips %}<a href="{{ clear_url }}">Clear all</a>{% endif %}</div>
+
+              <details class="f-group" open>
+                <summary>Ayurvedic / Allopathic</summary>
+                <div class="f-body">
+                  {% for value, label, count, checked in systems %}
+                  <label class="f-check"><input type="checkbox" name="system" value="{{ value }}" {% if checked %}checked{% endif %}><span>{{ label }}</span><em>{{ count }}</em></label>
+                  {% endfor %}
+                </div>
+              </details>
+
+              <details class="f-group" open>
+                <summary>Composition / ingredient</summary>
+                <div class="f-body"><input type="search" name="ing" value="{{ ingredient }}" class="form-control form-control-sm" placeholder="e.g. Pantoprazole, Iron" aria-label="Filter by ingredient"></div>
+              </details>
+
+              <details class="f-group" open>
+                <summary>Health problem / segment</summary>
+                <div class="f-body">
+                  {% for value, label, count, checked in categories %}
+                  <label class="f-check"><input type="checkbox" name="cat" value="{{ value }}" {% if checked %}checked{% endif %}><span>{{ label }}</span><em>{{ count }}</em></label>
+                  {% endfor %}
+                </div>
+              </details>
+
+              <details class="f-group" open>
+                <summary>Price</summary>
+                <div class="f-body">
+                  <div class="f-range" data-range data-lo="{{ price_lo }}" data-hi="{{ price_hi }}">
+                    <div class="range-track">
+                      <span class="range-fill"></span>
+                      <input type="range" min="{{ price_lo }}" max="{{ price_hi }}" step="5" value="{{ pmin|default:price_lo }}" data-range-min aria-label="Minimum price">
+                      <input type="range" min="{{ price_lo }}" max="{{ price_hi }}" step="5" value="{{ pmax|default:price_hi }}" data-range-max aria-label="Maximum price">
+                    </div>
+                    <div class="range-inputs">
+                      <label><span>&#8377;</span><input type="number" name="min" value="{{ pmin|default_if_none:'' }}" placeholder="{{ price_lo }}" min="0" inputmode="numeric" aria-label="Minimum price"></label>
+                      <i>to</i>
+                      <label><span>&#8377;</span><input type="number" name="max" value="{{ pmax|default_if_none:'' }}" placeholder="{{ price_hi }}" min="0" inputmode="numeric" aria-label="Maximum price"></label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="f-group" open>
+                <summary>Availability</summary>
+                <div class="f-body">
+                  <label class="f-check"><input type="checkbox" name="avail" value="1" {% if avail %}checked{% endif %}><span>Available to buy online</span></label>
+                  <label class="f-check"><input type="checkbox" name="sale" value="1" {% if sale %}checked{% endif %}><span>On sale now</span></label>
+                </div>
+              </details>
+
+              <details class="f-group">
+                <summary>Product type</summary>
+                <div class="f-body">
+                  <label class="f-check"><input type="radio" name="type" value="" {% if not ptype %}checked{% endif %}><span>All</span></label>
+                  <label class="f-check"><input type="radio" name="type" value="otc" {% if ptype == 'otc' %}checked{% endif %}><span>Non-prescription</span></label>
+                  <label class="f-check"><input type="radio" name="type" value="rx" {% if ptype == 'rx' %}checked{% endif %}><span>Prescription (Rx)</span></label>
+                </div>
+              </details>
+
+              <details class="f-group">
+                <summary>Customer rating</summary>
+                <div class="f-body">
+                  <label class="f-check"><input type="radio" name="rating" value="" {% if not rating %}checked{% endif %}><span>Any rating</span></label>
+                  <label class="f-check"><input type="radio" name="rating" value="4" {% if rating == 4 %}checked{% endif %}><span>4 <i class="bi bi-star-fill"></i> &amp; above</span></label>
+                  <label class="f-check"><input type="radio" name="rating" value="3" {% if rating == 3 %}checked{% endif %}><span>3 <i class="bi bi-star-fill"></i> &amp; above</span></label>
+                </div>
+              </details>
+
+              <div class="f-actions d-lg-none">
+                <a class="btn btn-outline-brand" href="{{ clear_url }}">Clear</a>
+                <button class="btn btn-brand" type="submit">Show {{ total }} result{{ total|pluralize }}</button>
+              </div>
+              <noscript><button class="btn btn-brand w-100 mt-3" type="submit">Apply filters</button></noscript>
+            </form>
+          </div>
+        </aside>
+      </div>
+
+      <!-- ============================== Results ============================== -->
+      <div class="col-lg-9">
+        <div class="shop-bar">
+          <button class="btn btn-outline-brand btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterPanel" aria-controls="filterPanel"><i class="bi bi-sliders"></i> Filters{% if chips %} <span class="badge-count">{{ chips|length }}</span>{% endif %}</button>
+          <p class="count"><b>{{ total }}</b> product{{ total|pluralize }}</p>
+          <form method="get" class="sort-form" data-sort-form>
+            {% for key in request.GET.keys %}{% if key != 'sort' and key != 'page' %}{% for v in request.GET|getlist:key %}<input type="hidden" name="{{ key }}" value="{{ v }}">{% endfor %}{% endif %}{% endfor %}
+            <label for="sort">Sort by</label>
+            <select id="sort" name="sort" class="form-select form-select-sm" data-autosubmit>
+              {% for key, label in sorts %}<option value="{{ key }}" {% if key == sort %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+          </form>
+        </div>
+
+        {% if chips %}
+        <div class="chip-row" aria-label="Active filters">
+          {% for text, url in chips %}<a class="fchip" href="{{ url }}">{{ text }} <i class="bi bi-x-lg" aria-hidden="true"></i><span class="visually-hidden">remove filter</span></a>{% endfor %}
+          <a class="fclear" href="{{ clear_url }}">Clear all</a>
+        </div>
+        {% endif %}
+
+        {% if products %}
+        <div class="row g-3 g-lg-4">
+          {% for p in products %}
+          <div class="col-6 col-md-4 col-xl-3 pitem">{% include "core/_product_card.html" %}</div>
+          {% endfor %}
+        </div>
+
+        {% if page.paginator.num_pages > 1 %}
+        <nav class="pager" aria-label="Pagination">
+          {% if page.has_previous %}<a href="?{% if qs_nopage %}{{ qs_nopage }}&amp;{% endif %}page={{ page.previous_page_number }}" rel="prev"><i class="bi bi-chevron-left"></i> Previous</a>{% endif %}
+          <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+          {% if page.has_next %}<a href="?{% if qs_nopage %}{{ qs_nopage }}&amp;{% endif %}page={{ page.next_page_number }}" rel="next">Next <i class="bi bi-chevron-right"></i></a>{% endif %}
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="empty text-center py-5">
+          <i class="bi bi-funnel"></i>
+          <h2 class="h4">No products match these filters</h2>
+          <p>Try removing a filter or widening the price range.</p>
+          <a class="btn btn-brand" href="{{ clear_url }}">Clear all filters</a>
+        </div>
+        {% endif %}
+
+        <p class="note-box mt-5"><i class="bi bi-info-circle"></i><span>Products marked <b>Rx</b> are prescription medicines. They are listed for healthcare professionals and are not sold online. Please read the <a href="{% url 'disclaimer' %}">medical disclaimer</a>.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+{% include "core/_cta_band.html" with heading="Looking to stock our products?" text="Ask for the product catalogue or talk to us about becoming an authorised distributor." %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Report damaged goods | Credit Lifesciences{% endblock %}
+{% block account_title %}Report damaged goods{% endblock %}
+{% block crumb %}<li class="breadcrumb-item"><a href="{% url 'account_orders' %}">Orders</a></li><li class="breadcrumb-item"><a href="{% url 'account_order' order.number %}">{{ order.number }}</a></li><li class="breadcrumb-item active">Damaged goods</li>{% endblock %}
+{% block account_content %}
+<div class="panel">
+  <p><b>{{ item.product_name }}</b> <span class="text-muted">{{ item.pack }} &middot; {{ left }} unit{{ left|pluralize }} can be returned</span></p>
+  <p class="small text-muted">Replacement requests are accepted only for goods received in a damaged condition. Please attach an unboxing video that shows the package being opened and the condition of the goods; we review it before approving a replacement. See <a href="{% url 'policies' %}">Shipping &amp; replacement policy</a>.</p>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      <div class="col-md-4">{{ form.quantity.label_tag }}{{ form.quantity }}{% for e in form.quantity.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-12">{{ form.details.label_tag }}{{ form.details }}</div>
+      <div class="col-12">{{ form.video.label_tag }}{{ form.video }}{% for e in form.video.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-12">{{ form.photo.label_tag }}{{ form.photo }}{% for e in form.photo.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+    </div>
+    <button class="btn btn-brand btn-lg mt-4" type="submit">Submit request</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+{% block title %}Page not found | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container text-center thanks">
+    <h1 class="display-1 fw-bold">404</h1>
+    <p class="lead">We couldn't find that page.</p>
+    <a class="btn btn-brand btn-lg mt-3" href="{% url 'home' %}">Back to home</a>
+  </div>
+</section>
+{% endblock %}

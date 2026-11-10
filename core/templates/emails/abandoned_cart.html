@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">You left something in your cart</h1>
+<p>Hi {{ name }},</p>
+<p>Your items are still waiting for you:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:12px 0;">
+  {% for row in rows %}<tr><td style="padding:8px 0;border-bottom:1px solid #e6ece9;"><b style="color:#101c2b;">{{ row.name }}</b><br><span style="font-size:13px;color:#667385;">{{ row.pack }} &times; {{ row.qty }}</span></td><td align="right" style="padding:8px 0;border-bottom:1px solid #e6ece9;">&#8377;{{ row.line }}</td></tr>{% endfor %}
+</table>
+<p style="margin:24px 0;"><a href="{{ cart_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Complete my order</a></p>
+<p style="font-size:12px;color:#667385;">Prices and availability can change. You are receiving this because you have an account with us. <a href="{{ unsubscribe_url }}" style="color:#667385;">Stop these reminders</a></p>
+{% endblock %}

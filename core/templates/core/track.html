@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+{% load core_extras %}
+{% block title %}Track Your Order | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Track order</li></ol></nav>
+    <h1>Track your order</h1>
+    <p>Enter your order number and the mobile number used at checkout.{% if user.is_authenticated %} Or see all your orders in <a href="{% url 'account_orders' %}">My orders</a>.{% endif %}</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container track-wrap">
+    <form method="post" class="panel" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="row g-3">
+        <div class="col-md-6">{{ form.number.label_tag }}{{ form.number }}{% for e in form.number.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+        <div class="col-md-6">{{ form.phone.label_tag }}{{ form.phone }}{% for e in form.phone.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      </div>
+      <button class="btn btn-brand btn-lg mt-4" type="submit">Track order</button>
+    </form>
+
+    {% if order %}
+    <div class="panel mt-4">
+      <div class="d-flex flex-wrap justify-content-between gap-2 mb-4">
+        <div><span class="muted-label">Order</span><h2 class="h4 mb-0">{{ order.number }}</h2></div>
+        <div class="text-md-end"><span class="muted-label">Placed on</span><div>{{ order.created_at|date:"d M Y" }}</div></div>
+      </div>
+      {% include "core/_timeline.html" %}
+      <hr>
+      <ul class="mini-items">
+        {% for i in order.items.all %}<li><div><b>{{ i.product_name }}</b><span>{{ i.pack }} &times; {{ i.quantity }}</span></div><em>&#8377;{{ i.line_total }}</em></li>{% endfor %}
+      </ul>
+      {% if order.status != 'cancelled' %}<p class="mt-3"><a href="{{ order|invoice_link }}" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Download invoice (PDF)</a></p>{% endif %}
+      <dl class="totals mb-0">
+        {% if order.bundle_discount %}<div class="disc"><dt>Bundle savings</dt><dd>-&#8377;{{ order.bundle_discount }}</dd></div>{% endif %}{% if order.discount %}<div class="disc"><dt>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</dt><dd>-&#8377;{{ order.discount }}</dd></div>{% endif %}{% if order.points_used %}<div class="disc"><dt>Credit points ({{ order.points_used }})</dt><dd>-&#8377;{{ order.points_discount }}</dd></div>{% endif %}<div class="total"><dt>Total ({{ order.get_payment_method_display }})</dt><dd>&#8377;{{ order.total }}</dd></div></dl>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load i18n static core_extras %}
+<article class="pcard stage-{{ p.stage }}" style="--accent: {{ p.accent }}">
+  <div class="pcard-media">
+    {% picture p.image alt=p.name %}
+    {% if p.is_rx %}<span class="tag tag-rx">Rx</span>{% elif p.on_sale %}<span class="tag tag-sale">{% trans "Sale" %}{% if p.discount_pct %} &middot; {{ p.discount_pct }}% off{% endif %}</span>{% elif p.discount_pct %}<span class="tag tag-save">{{ p.discount_pct }}% off</span>{% endif %}
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'wishlist_toggle' p.slug %}" data-wishlist class="wish-form">
+      {% csrf_token %}
+      <button type="submit" class="wish {% if p.id in WISHLIST_IDS %}on{% endif %}" aria-label="Save {{ p.name }} to wishlist" aria-pressed="{% if p.id in WISHLIST_IDS %}true{% else %}false{% endif %}"><i class="bi {% if p.id in WISHLIST_IDS %}bi-heart-fill{% else %}bi-heart{% endif %}"></i></button>
+    </form>
+    {% else %}
+    <a class="wish wish-link" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" aria-label="Sign in to save {{ p.name }}"><i class="bi bi-heart"></i></a>
+    {% endif %}
+  </div>
+  <div class="pcard-body">
+    <span class="pcard-cat">{{ p.get_category_display }}</span>
+    <h3><a class="stretched-link" href="{{ p.get_absolute_url }}">{{ p.name }}</a></h3>
+    <p class="pcard-sub">{{ p.subtitle }}</p>
+    {% with stats=p.rating_stats %}{% if stats.count %}<div class="pcard-rate">{% include "core/_stars.html" with pct=stats.pct avg=stats.avg %}<span>{{ stats.avg }} ({{ stats.count }})</span></div>{% endif %}{% endwith %}
+    <div class="pcard-buy">
+      {% if p.sellable %}
+        <div class="price"><b>&#8377;{{ p.effective_price }}</b>{% if p.mrp > p.effective_price %}<s>&#8377;{{ p.mrp }}</s>{% elif p.on_sale %}<s>&#8377;{{ p.price }}</s>{% endif %}<small>{{ p.pack }}</small></div>
+        {% if p.in_stock %}
+        <a class="btn btn-brand btn-sm" href="{{ p.get_absolute_url }}">View Details</a>
+        {% else %}<span class="oos">{% trans "Out of stock" %}</span>{% endif %}
+      {% else %}
+        <div class="price"><small class="rx-line"><i class="bi bi-prescription2"></i> {% trans "Prescription medicine" %} &middot; {{ p.pack }}</small></div>
+        <a class="btn btn-outline-brand btn-sm" href="{{ p.get_absolute_url }}">View Details</a>
+      {% endif %}
+    </div>
+  </div>
+</article>

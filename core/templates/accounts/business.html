@@ -1,0 +1,32 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Business verification | Credit Lifesciences{% endblock %}
+{% block account_title %}Business verification{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Business verification</li>{% endblock %}
+{% block account_content %}
+<div class="panel mb-4">
+  <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+    <h2 class="h5 mb-0">Status</h2>
+    <span class="status status-{{ profile.kyc_status }}">{{ profile.get_kyc_status_display }}</span>
+  </div>
+  {% if profile.kyc_status == 'approved' %}<p class="mb-0">Your business account is approved. You can place orders.</p>
+  {% elif profile.kyc_status == 'pending' %}<p class="mb-0">We are reviewing the documents you sent on {{ profile.kyc_submitted_at|date:"d M Y" }}. This usually takes 1 working day.</p>
+  {% elif profile.kyc_status == 'rejected' %}<p class="mb-0"><b>We need a change:</b> {{ profile.kyc_note|default:"Please check your details and upload clear copies." }}</p>
+  {% else %}<p class="mb-0">Pharmaceutical products are supplied to licensed trade customers. Share your GST and drug licence details once and we will verify your account.</p>{% endif %}
+</div>
+<div class="panel">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.account_type.label_tag }}{{ form.account_type }}</div>
+      <div class="col-md-6">{{ form.business_name.label_tag }}{{ form.business_name }}{% for e in form.business_name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6">{{ form.gstin.label_tag }}{{ form.gstin }}{% for e in form.gstin.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6">{{ form.drug_licence_no.label_tag }}{{ form.drug_licence_no }}{% for e in form.drug_licence_no.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6">{{ form.gst_document.label_tag }}{{ form.gst_document }}{% for e in form.gst_document.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6">{{ form.licence_document.label_tag }}{{ form.licence_document }}{% for e in form.licence_document.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+    </div>
+    <p class="small text-muted mt-3 mb-0">Accepted files: PDF, JPG or PNG up to 5 MB. We use these documents only to verify your account.</p>
+    <button class="btn btn-brand btn-lg mt-3" type="submit">{% if profile.kyc_status == 'none' %}Submit for verification{% else %}Update and resubmit{% endif %}</button>
+  </form>
+</div>
+{% endblock %}

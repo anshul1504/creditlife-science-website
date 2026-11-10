@@ -1,0 +1,10 @@
+{% autoescape off %}Hi {{ name }},
+
+You left something in your cart:
+{% for row in rows %}- {{ row.qty }} x {{ row.name }} ({{ row.pack }}) - Rs {{ row.line }}
+{% endfor %}
+Complete your order: {{ cart_url }}
+
+Stop these reminders: {{ unsubscribe_url }}
+
+Credit Lifesciences{% endautoescape %}

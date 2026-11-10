@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">{{ heading }}</h1>
+<p>Hi {{ name }},</p>
+<p>{{ message }}</p>
+<p style="font-size:13px;color:#667385;margin-top:20px;">Questions? Call {{ SITE.phones.0.0 }} or reply to this email.</p>
+{% endblock %}

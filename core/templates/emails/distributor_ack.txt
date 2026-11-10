@@ -1,0 +1,7 @@
+{% autoescape off %}Hi {{ enq.full_name }},
+
+We have received the distributor enquiry for {{ enq.firm_name }} ({{ enq.district }}, {{ enq.state }}). Our team will contact you on {{ enq.mobile }} to discuss it.
+
+Submitting the form does not automatically grant an authorised distributorship.
+
+Credit Lifesciences - {{ SITE.tagline }}{% endautoescape %}

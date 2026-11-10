@@ -1,0 +1,28 @@
+{# Variables: cart, offers #}
+<div class="coupon-box">
+  {% if cart.coupon %}
+  <div class="coupon-applied">
+    <i class="bi bi-patch-check-fill"></i>
+    <div><b>{{ cart.coupon.code }}</b><span>{% if cart.discount %}You save &#8377;{{ cart.discount }}{% else %}Free delivery applied{% endif %}</span></div>
+    <form method="post" action="{% url 'coupon_remove' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="link-btn" type="submit">Remove</button></form>
+  </div>
+  {% else %}
+  <form method="post" action="{% url 'coupon_apply' %}" class="coupon-form">
+    {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+    <i class="bi bi-ticket-perforated"></i>
+    <input type="text" name="code" placeholder="Have a coupon code?" autocomplete="off" autocapitalize="characters" aria-label="Coupon code">
+    <button class="btn btn-outline-brand btn-sm" type="submit">Apply</button>
+  </form>
+  {% endif %}
+  {% if cart.coupon_notice %}<p class="coupon-note"><i class="bi bi-info-circle"></i> {{ cart.coupon_notice }}</p>{% endif %}
+  {% if offers and not cart.coupon %}
+  <ul class="offers" aria-label="Available offers">
+    {% for o in offers %}
+    <li class="{% if not o.eligible %}off{% endif %}">
+      <div><b>{{ o.coupon.code }}</b><span>{{ o.coupon.description|default:o.coupon.headline }}</span>{% if not o.eligible %}<em>{{ o.reason }}</em>{% endif %}</div>
+      {% if o.eligible %}<form method="post" action="{% url 'coupon_apply' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><input type="hidden" name="code" value="{{ o.coupon.code }}"><button class="link-btn apply" type="submit">Apply</button></form>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

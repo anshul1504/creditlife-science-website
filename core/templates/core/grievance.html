@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}Grievance Officer | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Grievance Officer</h1></div></section>
+<section class="section pt-4"><div class="container legal">
+  {% include "core/_draft_notice.html" %}
+  <p>If you have a complaint about an order, a product, your data or anything on this website, write to our Grievance Officer. We acknowledge every complaint within 24 hours and aim to resolve it within 15 days.</p>
+  <div class="panel">
+    <dl class="mb-0">
+      <dt>Name</dt><dd>{{ SELLER.grievance_name|default:"To be announced" }}</dd>
+      <dt>Email</dt><dd><a href="mailto:{{ SELLER.grievance_email }}">{{ SELLER.grievance_email }}</a></dd>
+      {% if SELLER.grievance_phone %}<dt>Phone</dt><dd>{{ SELLER.grievance_phone }}</dd>{% else %}<dt>Phone</dt><dd>{{ SITE.phones.0.0 }}</dd>{% endif %}
+      {% if SELLER.address %}<dt>Address</dt><dd>{{ SELLER.legal_name }}, {{ SELLER.address }}</dd>{% endif %}
+    </dl>
+  </div>
+  <h2>What to include</h2>
+  <p>Your name, phone number, order number (if any) and a short description of the problem. Photos help if a product arrived damaged.</p>
+  <h2>Other ways to reach us</h2>
+  <p>You can also use the <a href="{% url 'contact' %}">contact form</a> or call {{ SITE.phones.0.0 }}.</p>
+</div></section>
+{% endblock %}

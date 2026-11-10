@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% block title %}Terms of Sale | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Terms of sale</h1></div></section>
+<section class="section pt-4"><div class="container legal">
+  {% include "core/_draft_notice.html" %}
+  <p>These terms apply to purchases made on this website, operated by <b>{{ SELLER.legal_name }}</b> ({{ SITE.name }}){% if SELLER.address %}, {{ SELLER.address }}{% endif %}.{% if SELLER.gstin %} GSTIN: {{ SELLER.gstin }}.{% endif %}{% if SELLER.licence %} Licence: {{ SELLER.licence }}.{% endif %}</p>
+  <h2>1. Products and information</h2>
+  <p>Credit Lifesciences markets Ayurvedic and Allopathic pharmaceutical products under its own brand names. Product pages describe composition, use and cautions as supplied by the company. They are not a substitute for advice from a doctor. Prescription (Rx) medicines are not sold to the public and are supplied only to licensed trade customers.</p>
+  <h2>2. Prices and tax</h2>
+  <p>All prices are in Indian rupees and include GST. The price shown at the time you place the order is the price you pay. A tax invoice is issued for every order. We may correct an obvious pricing error and will contact you before dispatch if that affects your order.</p>
+  <h2>3. Who can order</h2>
+  <p>Online ordering is for registered distributors and authorised business partners. An order is a request to buy and is accepted when we confirm it. We may decline or cancel an order, for example if stock is not available or a payment is not completed; any amount you paid for a cancelled order is refunded.</p>
+  <h2>4. Payment</h2>
+  <p>We accept UPI, debit cards, credit cards and net banking. Online payments are handled by Razorpay; we never see or store your card or UPI details. An online order is confirmed after successful payment.</p>
+  <h2>5. Shipping and delivery</h2>
+  <p>The buyer bears the shipping cost, which depends on the third-party delivery service and is shown before payment. Delivery times shown are estimates, not guarantees. See <a href="{% url 'policies' %}">Shipping &amp; replacement policy</a>.</p>
+  <h2>6. Damaged goods</h2>
+  <p>Replacement is available only for goods received in a damaged condition, on review of an unboxing video as described in our <a href="{% url 'policies' %}">Shipping &amp; replacement policy</a>. We do not offer refunds, or returns for reasons other than damage.</p>
+  <h2>7. Your account</h2>
+  <p>Keep your sign-in details safe. You are responsible for activity under your account. Provide accurate details at checkout so we can deliver your order.</p>
+  <h2>8. Offers</h2>
+  <p>Any special price or offer is subject to the conditions shown with it and may be withdrawn at any time.</p>
+  <h2>9. Liability</h2>
+  <p>To the extent the law allows, our liability for any order is limited to the amount you paid for it. Nothing here limits your rights under the Consumer Protection Act, 2019.</p>
+  <h2>10. Governing law and complaints</h2>
+  <p>These terms are governed by the laws of India. Complaints can be sent to our <a href="{% url 'grievance' %}">Grievance Officer</a>.</p>
+</div></section>
+{% endblock %}

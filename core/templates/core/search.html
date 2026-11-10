@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}{% if query %}Search: {{ query }}{% else %}Search{% endif %} | Credit Lifesciences{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>{% if query %}Results for &ldquo;{{ query }}&rdquo;{% else %}Search{% endif %}</h1>
+    <p>{% if query %}{{ products|length }} product{{ products|length|pluralize }} found{% if corrected %} &middot; showing results for <b>{{ shown }}</b> (you typed &ldquo;{{ query }}&rdquo;){% endif %}{% else %}Type a product name, ingredient or concern in the search box above.{% endif %}</p>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    {% if products %}
+    <div class="row g-4">
+      {% for p in products %}<div class="col-sm-6 col-lg-3">{% include "core/_product_card.html" %}</div>{% endfor %}
+    </div>
+    {% elif query %}
+    <div class="empty text-center">
+      <i class="bi bi-search"></i>
+      <h2>No products found</h2>
+      <p>Try a different word, or browse the full range.</p>
+      <a class="btn btn-brand btn-lg" href="{% url 'products' %}">Shop all products</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

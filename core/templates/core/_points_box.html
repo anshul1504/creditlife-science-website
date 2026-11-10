@@ -1,0 +1,19 @@
+{# Variables: cart. Shown to signed-in customers who have credit points. #}
+{% if user.is_authenticated and cart.points_balance %}
+<div class="coupon-box points-box">
+  {% if cart.points_used %}
+  <div class="coupon-applied">
+    <i class="bi bi-coin"></i>
+    <div><b>{{ cart.points_used }} credit points</b><span>You save &#8377;{{ cart.points_discount }}</span></div>
+    <form method="post" action="{% url 'points_remove' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="link-btn" type="submit">Remove</button></form>
+  </div>
+  {% else %}
+  <form method="post" action="{% url 'points_apply' %}" class="coupon-form">
+    {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><input type="hidden" name="points" value="max">
+    <i class="bi bi-coin"></i>
+    <span class="flex-fill small">You have <b>{{ cart.points_balance }}</b> credit points</span>
+    <button class="btn btn-outline-brand btn-sm" type="submit">Use points</button>
+  </form>
+  {% endif %}
+</div>
+{% endif %}

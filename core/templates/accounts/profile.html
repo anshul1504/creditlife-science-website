@@ -1,0 +1,13 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Profile | Credit Lifesciences{% endblock %}
+{% block account_title %}Profile{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Profile</li>{% endblock %}
+{% block account_content %}
+<form method="post" class="panel" novalidate>
+  {% csrf_token %}
+  <div class="mb-3"><label>Email</label><input class="form-control" value="{{ user.email }}" disabled><div class="form-note mt-1">{% if EMAIL_UNVERIFIED %}Not verified yet.{% else %}<span class="verified"><i class="bi bi-patch-check-fill"></i> Verified</span>{% endif %} Your email is your sign-in ID.</div></div>
+  {% include "accounts/_fields.html" %}
+  <p class="form-note">Mobile number: {% if user.profile.phone_verified %}<span class="verified"><i class="bi bi-patch-check-fill"></i> Verified</span>{% elif user.profile.phone %}not verified yet. <a href="{% url 'verify_phone' %}">Verify it</a> to sign in with your number.{% else %}not added.{% endif %}</p>
+  <button class="btn btn-brand btn-lg" type="submit">Save changes</button>
+</form>
+{% endblock %}

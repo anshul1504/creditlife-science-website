@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}Thank you | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container text-center thanks">
+    <div class="check"><i class="bi bi-check-lg"></i></div>
+    <h1>Thank you</h1>
+    <p class="lead">Your enquiry has been received. Our team will call you back shortly.</p>
+    <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+      <a class="btn btn-brand btn-lg" href="{% url 'products' %}">Explore products</a>
+      <a class="btn btn-outline-brand btn-lg" href="{% url 'home' %}">Back to home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

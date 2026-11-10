@@ -1,0 +1,120 @@
+{% comment %}
+  The whole sign-in / sign-up / forgot-password / verify-email experience. It is used inside the popup and,
+  for direct visits, inside the popup-style page card. Variables: flow_start, flow_email, flow_next, flow_autosend.
+{% endcomment %}
+<div class="flow" data-flow data-start="{{ flow_start|default:'identify' }}" data-email="{{ flow_email|default:'' }}"
+     data-next="{{ flow_next|default:'' }}" data-autosend="{{ flow_autosend|default:'' }}"
+     data-url-identify="{% url 'otp_identify' %}" data-url-request="{% url 'otp_request' %}"
+     data-url-verify="{% url 'otp_verify' %}" data-url-login="{% url 'ajax_login' %}"
+     data-guest-url="{% url 'products' %}">
+  {% csrf_token %}
+  <noscript><div class="auth-alert"><i class="bi bi-exclamation-triangle"></i><span>Please turn on JavaScript to sign in.</span></div></noscript>
+  <div class="auth-alert" data-flow-alert role="alert" hidden><i class="bi bi-exclamation-triangle"></i><span></span></div>
+
+  <!-- 1. Who are you? -->
+  <section data-step="identify">
+    <span class="auth-icon"><i class="bi bi-person-circle"></i></span>
+    <h2 class="flow-title">Sign in or create an account</h2>
+    <p class="flow-sub">Enter your email address. We will send a one-time code, so there is no password to remember.</p>
+    <form data-form="identify" novalidate>
+      <div class="field mb-3">
+        <div class="form-floating"><input class="form-control" type="text" id="flowEmail" name="email" placeholder="you@example.com" autocomplete="username" inputmode="email" required><label for="flowEmail">Email address{% if SMS_LOGIN %} or mobile number{% endif %}</label></div>
+      </div>
+      <button class="btn btn-brand btn-lg w-100" type="submit"><span>Continue</span></button>
+    </form>
+    {% if GOOGLE_ENABLED %}<div class="flow-or"><span>or</span></div><a class="btn btn-outline-brand btn-lg w-100" href="{% url 'google_start' %}" data-google><i class="bi bi-google"></i> Continue with Google</a>{% endif %}
+    <p class="flow-legal">By continuing you agree to our <a href="{% url 'privacy' %}" target="_blank" rel="noopener">privacy notice</a> and <a href="{% url 'policies' %}" target="_blank" rel="noopener">shipping &amp; returns policy</a>.</p>
+  </section>
+
+  <!-- 2. The one-time code -->
+  <section data-step="otp" hidden>
+    <button type="button" class="flow-back" data-go="identify" aria-label="Back"><i class="bi bi-arrow-left"></i></button>
+    <span class="auth-icon"><i class="bi bi-envelope-paper"></i></span>
+    <h2 class="flow-title" data-otp-title>Enter the code</h2>
+    <p class="flow-sub">We sent a code to <b class="text-break" data-otp-email></b>. <button type="button" class="linklike" data-go="identify">Change</button></p>
+    <form data-form="otp" novalidate>
+      <div class="otp-boxes" data-otp-boxes role="group" aria-label="One-time code"></div>
+      <div class="reset-fields" data-reset-fields hidden>
+        <div class="field mb-3">
+          <div class="form-floating pw-field">
+            <input class="form-control" type="password" id="flowNewPw" name="new_password1" placeholder="New password" autocomplete="new-password"><label for="flowNewPw">New password</label>
+            <button type="button" class="pw-toggle" data-pw-toggle aria-label="Show password" aria-pressed="false"><i class="bi bi-eye"></i></button>
+          </div>
+          <div class="pw-meter" data-pw-meter data-target="flowNewPw" data-score="0"><div class="pw-bars"><i></i><i></i><i></i><i></i></div><span class="pw-label">Password strength</span></div>
+          <ul class="pw-rules" data-pw-rules>
+            <li data-rule="len"><i class="bi bi-circle"></i> 8 or more characters</li>
+            <li data-rule="mix"><i class="bi bi-circle"></i> Letters and numbers</li>
+            <li data-rule="case"><i class="bi bi-circle"></i> Upper and lower case</li>
+            <li data-rule="sym"><i class="bi bi-circle"></i> A symbol, or 12+ characters</li>
+          </ul>
+        </div>
+        <div class="field mb-3">
+          <div class="form-floating pw-field">
+            <input class="form-control" type="password" id="flowNewPw2" name="new_password2" placeholder="Confirm new password" autocomplete="new-password"><label for="flowNewPw2">Confirm new password</label>
+            <button type="button" class="pw-toggle" data-pw-toggle aria-label="Show password" aria-pressed="false"><i class="bi bi-eye"></i></button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-brand btn-lg w-100" type="submit"><span data-otp-submit>Verify and continue</span></button>
+    </form>
+    <p class="otp-resend"><span data-resend-timer></span><button type="button" class="linklike" data-resend hidden>Resend code</button></p>
+    <p class="flow-alt" data-login-only><button type="button" class="linklike" data-go="password">Use my password instead</button></p>
+    <p class="flow-legal"><i class="bi bi-shield-lock"></i> Never share this code with anyone. We will never ask for it by phone.</p>
+  </section>
+
+  <!-- 3. New customer details -->
+  <section data-step="signup" hidden>
+    <button type="button" class="flow-back" data-go="identify" aria-label="Back"><i class="bi bi-arrow-left"></i></button>
+    <span class="auth-icon"><i class="bi bi-person-plus"></i></span>
+    <h2 class="flow-title">Create your account</h2>
+    <p class="flow-sub">Welcome! Tell us a little about you for <b class="text-break" data-signup-email></b>. We will verify the email with a code.</p>
+    <form data-form="signup" novalidate>
+      <div class="field mb-3"><div class="form-floating"><input class="form-control" type="text" id="flowName" name="name" placeholder="Full name" autocomplete="name" required><label for="flowName">Full name</label></div></div>
+      <div class="field mb-3">
+        <div class="input-group phone-group"><span class="input-group-text">+91</span><div class="form-floating"><input class="form-control" type="tel" id="flowPhone" name="phone" placeholder="Mobile number" autocomplete="tel-national" inputmode="numeric" required><label for="flowPhone">Mobile number</label></div></div>
+      </div>
+      <button class="btn btn-brand btn-lg w-100" type="submit"><span>Send verification code</span></button>
+    </form>
+  </section>
+
+  <!-- 4. Password sign-in -->
+  <section data-step="password" hidden>
+    <button type="button" class="flow-back" data-go="identify" aria-label="Back"><i class="bi bi-arrow-left"></i></button>
+    <span class="auth-icon"><i class="bi bi-key"></i></span>
+    <h2 class="flow-title">Enter your password</h2>
+    <p class="flow-sub">Signing in as <b class="text-break" data-password-email></b>.</p>
+    <form data-form="password" novalidate>
+      <div class="field mb-3">
+        <div class="form-floating pw-field">
+          <input class="form-control" type="password" id="flowPassword" name="password" placeholder="Password" autocomplete="current-password" required><label for="flowPassword">Password</label>
+          <button type="button" class="pw-toggle" data-pw-toggle aria-label="Show password" aria-pressed="false"><i class="bi bi-eye"></i></button>
+        </div>
+      </div>
+      <div class="auth-row">
+        <label class="check-row"><input type="checkbox" name="remember" checked> <span>Keep me signed in</span></label>
+        <button type="button" class="linklike" data-forgot>Forgot password?</button>
+      </div>
+      <button class="btn btn-brand btn-lg w-100" type="submit"><span>Sign in</span></button>
+    </form>
+    <p class="flow-alt"><button type="button" class="linklike" data-send-login-otp>Email me a code instead</button></p>
+  </section>
+
+  <!-- 5. Forgot password (for direct visits) -->
+  <section data-step="reset" hidden>
+    <span class="auth-icon"><i class="bi bi-shield-lock"></i></span>
+    <h2 class="flow-title">Reset your password</h2>
+    <p class="flow-sub">Enter your email address. We will send a code that lets you choose a new password.</p>
+    <form data-form="reset" novalidate>
+      <div class="field mb-3"><div class="form-floating"><input class="form-control" type="email" id="flowResetEmail" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required><label for="flowResetEmail">Email address</label></div></div>
+      <button class="btn btn-brand btn-lg w-100" type="submit"><span>Send code</span></button>
+    </form>
+    <p class="flow-alt"><button type="button" class="linklike" data-go="identify">Back to sign in</button></p>
+  </section>
+
+  <!-- 6. Success -->
+  <section data-step="done" hidden class="text-center">
+    <span class="auth-icon ok big"><i class="bi bi-check-lg"></i></span>
+    <h2 class="flow-title" data-done-title>You are signed in</h2>
+    <p class="flow-sub" data-done-text>Taking you back now...</p>
+  </section>
+</div>

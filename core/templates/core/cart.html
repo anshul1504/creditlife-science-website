@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Your cart" %} | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li><li class="breadcrumb-item active">{% trans "Cart" %}</li></ol></nav>
+    <h1>{% trans "Your cart" %}</h1>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    {% if cart.items %}
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-8">
+        {% if SHOP.free_shipping_above %}<div class="ship-meter">
+          {% if cart.free_shipping_gap %}
+          <p>Add <b>&#8377;{{ cart.free_shipping_gap }}</b> more for <b>free delivery</b>.</p>
+          {% else %}
+          <p><i class="bi bi-check-circle-fill"></i> You have unlocked <b>free delivery</b>.</p>
+          {% endif %}
+          <div class="bar"><span style="width: {{ cart.free_shipping_progress }}%"></span></div>
+        </div>{% else %}<p class="small text-muted">Shipping is charged by our delivery partner. The amount is shown before you pay.</p>{% endif %}
+        <div class="cart-list">
+          {% for row in cart.items %}
+          <div class="cart-row">
+            <a class="cr-img stage-{{ row.product.stage }}" href="{{ row.product.get_absolute_url }}"><img src="{% static row.product.image %}" alt="{{ row.product.name }}"></a>
+            <div class="cr-info">
+              <a class="cr-name" href="{{ row.product.get_absolute_url }}">{{ row.product.name }}</a>
+              <span class="cr-meta">{{ row.product.pack }} &middot; &#8377;{{ row.unit }} each</span>
+              <form method="post" action="{% url 'cart_remove' row.product.slug %}" class="mt-1">{% csrf_token %}<button class="link-btn" type="submit"><i class="bi bi-trash3"></i> {% trans "Remove" %}</button></form>
+            </div>
+            <form method="post" action="{% url 'cart_update' row.product.slug %}" data-auto-submit>
+              {% csrf_token %}
+              <div class="qty qty-sm" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease quantity">&minus;</button>
+                <input type="number" name="qty" value="{{ row.qty }}" min="1" max="{{ SHOP.max_qty }}" inputmode="numeric" aria-label="Quantity">
+                <button type="button" data-step="1" aria-label="Increase quantity">+</button>
+              </div>
+            </form>
+            <div class="cr-line">&#8377;{{ row.line }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <a class="btn btn-outline-brand mt-4" href="{% url 'products' %}"><i class="bi bi-arrow-left"></i> {% trans "Continue shopping" %}</a>
+      </div>
+      <div class="col-lg-4">
+        <aside class="summary">
+          <h2>{% trans "Order summary" %}</h2>
+          {% include "core/_coupon_box.html" %}
+          {% include "core/_points_box.html" %}
+            <dl>
+            <div><dt>{% trans "Subtotal" %}</dt><dd>&#8377;{{ cart.subtotal }}</dd></div>
+            {% if cart.bundle_discount %}<div class="disc"><dt>{% trans "Bundle savings" %}</dt><dd>-&#8377;{{ cart.bundle_discount }}</dd></div>{% endif %}
+            {% if cart.discount %}<div class="disc"><dt>Coupon ({{ cart.coupon.code }})</dt><dd>-&#8377;{{ cart.discount }}</dd></div>{% endif %}
+            {% if cart.points_discount %}<div class="disc"><dt>Credit points ({{ cart.points_used }})</dt><dd>-&#8377;{{ cart.points_discount }}</dd></div>{% endif %}
+            <div><dt>{% trans "Delivery" %}</dt><dd>{% if cart.shipping %}&#8377;{{ cart.shipping }}{% else %}<span class="free">{% trans "Free" %}</span>{% endif %}</dd></div>
+            <div class="total"><dt>{% trans "Total" %}</dt><dd>&#8377;{{ cart.total }}</dd></div>
+          </dl>
+          <p class="sum-note">{% trans "Inclusive of all taxes. Choose cash on delivery or pay online at checkout." %}</p>
+          <a class="btn btn-outline-brand w-100 mb-2" href="{{ cart.whatsapp_url }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Order via WhatsApp</a>
+          <a class="btn btn-brand btn-lg w-100" href="{% url 'checkout' %}">{% trans "Proceed to checkout" %} <i class="bi bi-arrow-right"></i></a>
+        </aside>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty text-center">
+      <i class="bi bi-bag"></i>
+      <h2>{% trans "Your cart is empty" %}</h2>
+      <p>{% trans "Looks like you haven't added anything yet." %}</p>
+      <a class="btn btn-brand btn-lg" href="{% url 'products' %}">{% trans "Start shopping" %}</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

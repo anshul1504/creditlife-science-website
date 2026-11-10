@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% block title %}You are offline | Credit Lifesciences{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container text-center" style="max-width:520px">
+    <div class="empty"><i class="bi bi-wifi-off"></i>
+      <h1 class="h3">You are offline</h1>
+      <p>We could not reach the internet. Pages you opened recently are still available. Check your connection and try again.</p>
+      <button class="btn btn-brand btn-lg" type="button" data-reload>Try again</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

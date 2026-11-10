@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Health library | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Health library</h1>
+    <p>Plain-language articles from our team. For education only, not a substitute for a doctor's advice.</p>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    {% if page_obj %}
+    <div class="row g-4">
+      {% for a in page_obj %}
+      <div class="col-md-6 col-lg-4">
+        <a class="post-card" href="{{ a.get_absolute_url }}">
+          {% if a.cover %}<img src="{{ a.cover.url }}" alt="" loading="lazy">{% endif %}
+          <div class="post-body">
+            {% if not a.is_published %}<span class="badge text-bg-warning mb-2">Draft (staff only)</span>{% endif %}
+            <h2 class="h5">{{ a.title }}</h2>
+            <p>{{ a.summary }}</p>
+            <small>{{ a.published_at|date:"d M Y" }} &middot; {{ a.author }}</small>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="mt-4 d-flex gap-2 justify-content-center">
+      {% if page_obj.has_previous %}<a class="btn btn-outline-brand" href="?page={{ page_obj.previous_page_number }}">Newer</a>{% endif %}
+      {% if page_obj.has_next %}<a class="btn btn-outline-brand" href="?page={{ page_obj.next_page_number }}">Older</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="empty text-center"><i class="bi bi-journal-text"></i><h2>Articles coming soon</h2><p>We are preparing our first guides.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

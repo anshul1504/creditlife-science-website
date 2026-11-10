@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'account' %}">My account</a></li>{% block crumb %}{% endblock %}</ol></nav>
+    <h1>{% block account_title %}My account{% endblock %}</h1>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-3">
+        {% with n=request.resolver_match.url_name %}
+        <nav class="acct-nav" aria-label="Account">
+          <a href="{% url 'account' %}" class="{% if n == 'account' %}active{% endif %}"><i class="bi bi-speedometer2"></i> Overview</a>
+          <a href="{% url 'account_orders' %}" class="{% if n == 'account_orders' or n == 'account_order' %}active{% endif %}"><i class="bi bi-box-seam"></i> My orders</a>
+          <a href="{% url 'account_business' %}" class="{% if n == 'account_business' %}active{% endif %}"><i class="bi bi-patch-check"></i> Business verification</a>
+          <a href="{% url 'account_returns' %}" class="{% if n == 'account_returns' or n == 'account_return' %}active{% endif %}"><i class="bi bi-arrow-return-left"></i> Returns</a>
+          {% if SHOP.consumer_features %}
+          <a href="{% url 'account_subscriptions' %}" class="{% if n == 'account_subscriptions' %}active{% endif %}"><i class="bi bi-arrow-repeat"></i> Subscriptions</a>
+          <a href="{% url 'account_rewards' %}" class="{% if n == 'account_rewards' %}active{% endif %}"><i class="bi bi-coin"></i> Rewards</a>
+          {% endif %}
+          <a href="{% url 'account_wishlist' %}" class="{% if n == 'account_wishlist' %}active{% endif %}"><i class="bi bi-heart"></i> Wishlist</a>
+          <a href="{% url 'account_addresses' %}" class="{% if n == 'account_addresses' or n == 'address_new' or n == 'address_edit' %}active{% endif %}"><i class="bi bi-geo-alt"></i> Addresses</a>
+          <a href="{% url 'account_profile' %}" class="{% if n == 'account_profile' %}active{% endif %}"><i class="bi bi-person"></i> Profile</a>
+          <a href="{% url 'password_change' %}" class="{% if n == 'password_change' %}active{% endif %}"><i class="bi bi-key"></i> Change password</a>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit"><i class="bi bi-box-arrow-right"></i> Sign out</button></form>
+        </nav>
+        {% endwith %}
+      </div>
+      <div class="col-lg-9">{% block account_content %}{% endblock %}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

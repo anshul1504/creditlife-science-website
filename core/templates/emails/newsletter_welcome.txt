@@ -1,0 +1,9 @@
+{% autoescape off %}You are on the list.
+
+Thank you for subscribing to Credit Lifesciences. We will send you occasional health tips, product news and offers. No spam, ever.
+
+Browse our range: {{ shop_url }}
+
+Changed your mind? Unsubscribe in one click: {{ unsubscribe_url }}
+
+Credit Lifesciences{% endautoescape %}

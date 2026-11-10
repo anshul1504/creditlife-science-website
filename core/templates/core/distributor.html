@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% block title %}Become a Distributor | Credit Lifesciences{% endblock %}
+{% block description %}Join Credit Lifesciences as an authorised distribution partner. Eligibility, minimum initial purchase, business support and the distributor enquiry form.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Become a Distributor</li></ol></nav>
+    <span class="eyebrow">Distributor partnership</span>
+    <h1>Become a Distributor</h1>
+    <p>Grow your business. Build lasting partnerships. Make a difference in healthcare.</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    {% include "core/_draft_notice.html" %}
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-7">
+        <p class="sec-lead">Join Credit Lifesciences as an authorised distribution partner. We believe in building long-term business relationships that support business growth while contributing to wider healthcare accessibility. If you have experience in pharmaceutical distribution and an established retail chemist network, we invite you to explore a business partnership with us.</p>
+
+        <div class="glance">
+          <div class="glance-tile glance-main"><span>Minimum initial purchase</span><b>&#8377;{{ min_purchase }}</b></div>
+          <div class="glance-tile"><i class="bi bi-geo-alt"></i><span>Territory-based opportunities</span></div>
+          <div class="glance-tile"><i class="bi bi-headset"></i><span>Sales and marketing support</span></div>
+        </div>
+
+        <h2 class="h4 mt-5 mb-3">Why partner with us</h2>
+        <div class="benefit-grid">
+          <div class="benefit"><i class="bi bi-award"></i><p>Association with an established pharmaceutical company since {{ SITE.established }}.</p></div>
+          <div class="benefit"><i class="bi bi-tag"></i><p>Access to an affordable product range, Ayurvedic and Allopathic.</p></div>
+          <div class="benefit"><i class="bi bi-megaphone"></i><p>Sales and marketing support.</p></div>
+          <div class="benefit"><i class="bi bi-shop"></i><p>Assistance in connecting with retail chemists.</p></div>
+          <div class="benefit"><i class="bi bi-file-earmark-richtext"></i><p>Promotional materials and product catalogues.</p></div>
+          <div class="benefit"><i class="bi bi-geo-alt"></i><p>Territory-based distribution opportunities.</p></div>
+          <div class="benefit"><i class="bi bi-people-fill"></i><p>A long-term business partnership approach.</p></div>
+        </div>
+
+        <div class="row g-4 mt-1">
+          <div class="col-md-6">
+            <div class="info-card h-100">
+              <h2 class="h5"><i class="bi bi-patch-check"></i> Eligibility</h2>
+              <ul class="tick">
+                <li>Valid GST registration.</li>
+                <li>Wholesale drug licence: Form 20B and Form 21B, as applicable to the products and your business.</li>
+                <li>Adequate storage facilities.</li>
+                <li>Existing pharmaceutical distribution experience.</li>
+                <li>An established network of retail chemists.</li>
+                <li>Financial capacity to manage distribution.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-card h-100">
+              <h2 class="h5"><i class="bi bi-headset"></i> Business &amp; sales support</h2>
+              <ul class="tick">
+                <li>Sales representatives.</li>
+                <li>Help connecting with local chemists and pharmacies.</li>
+                <li>Promotional materials, product catalogues and marketing support.</li>
+                <li>Retailer visits and help generating orders from retail pharmacies.</li>
+                <li>Sales and business guidance.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="small text-muted mt-4">Multiple distributors may operate in the same district, with specific territories allocated to each. See where we are today on the <a href="{% url 'network' %}">Distribution Network</a> page, or read the <a href="{% url 'faqs' %}">FAQs</a>.</p>
+      </div>
+
+      <div class="col-lg-5">
+        <form method="post" class="enq-form form-card sticky-form" novalidate>
+          {% csrf_token %}
+          <h2 class="h4">Distributor enquiry form</h2>
+          <p class="form-intro">Tell us about your business. Our team will contact you to discuss your enquiry.</p>
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="hp" aria-hidden="true">{{ form.website.label_tag }} {{ form.website }}</div>
+          <div class="row g-3">
+            <div class="col-md-6">{{ form.full_name.label_tag }}{{ form.full_name }}{% for e in form.full_name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.firm_name.label_tag }}{{ form.firm_name }}{% for e in form.firm_name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.mobile.label_tag }}{{ form.mobile }}{% for e in form.mobile.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}{% for e in form.email.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.state.label_tag }}{{ form.state }}{% for e in form.state.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.district.label_tag }}{{ form.district }}{% for e in form.district.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-12">{{ form.gst_number.label_tag }}{{ form.gst_number }}{% for e in form.gst_number.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-12">{{ form.licence_number.label_tag }}{{ form.licence_number }}{% for e in form.licence_number.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-12">{{ form.experience_years.label_tag }}{{ form.experience_years }}{% for e in form.experience_years.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+          </div>
+          <button class="btn btn-brand btn-lg w-100 mt-4" type="submit"><span>Submit enquiry</span> <i class="bi bi-send"></i></button>
+          <p class="form-note">Submitting this form does not automatically grant an authorised distributorship. See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

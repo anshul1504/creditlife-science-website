@@ -1,0 +1,12 @@
+{% extends "accounts/auth_base.html" %}
+{% block title %}Verify your email | Credit Lifesciences{% endblock %}
+{% block brand_kicker %}One last step{% endblock %}
+{% block brand_title %}Almost there, {{ user.first_name|default:"friend" }}.{% endblock %}
+{% block brand_sub %}Verifying your email keeps your account secure and lets you receive order updates and write reviews.{% endblock %}
+{% block brand_points %}
+<li><i class="bi bi-envelope-check"></i><div><b>Order confirmations</b><span>Sent straight to your inbox</span></div></li>
+<li><i class="bi bi-star"></i><div><b>Verified reviews</b><span>Share your experience with others</span></div></li>
+<li><i class="bi bi-shield-check"></i><div><b>A safer account</b><span>Easy recovery if you get locked out</span></div></li>
+{% endblock %}
+{% block auth_head %}{% endblock %}
+{% block auth_body %}{% include "accounts/_flow.html" with flow_start="verify" flow_email=user.email flow_autosend="1" flow_next="/account/" %}{% endblock %}

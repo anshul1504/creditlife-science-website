@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Verify your email</h1>
+<p>Hi {{ user.first_name|default:"there" }},</p>
+<p>Thanks for creating a Credit Lifesciences account. Please confirm your email address so we can send you order updates and let you review products.</p>
+<p style="margin:28px 0;"><a href="{{ verify_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Verify my email</a></p>
+<p style="font-size:13px;color:#667385;">This link is valid for 3 days. If the button does not work, copy this address into your browser:<br><a href="{{ verify_url }}" style="color:#0e7a55;word-break:break-all;">{{ verify_url }}</a></p>
+<p style="font-size:13px;color:#667385;">If you did not create this account, you can ignore this email.</p>
+{% endblock %}

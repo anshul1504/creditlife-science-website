@@ -1,0 +1,25 @@
+{% extends "accounts/layout.html" %}
+{% block title %}My orders | Credit Lifesciences{% endblock %}
+{% block account_title %}My orders{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Orders</li>{% endblock %}
+{% block account_content %}
+<form class="ord-filter mb-3" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search by order number or product" aria-label="Search orders">
+  <select name="status" aria-label="Filter by status"><option value="">All statuses</option>{% for k, label in statuses %}<option value="{{ k }}" {% if k == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <button class="btn btn-brand" type="submit">Filter</button>
+  {% if q or status %}<a class="btn btn-outline-brand" href="{% url 'account_orders' %}">Clear</a>{% endif %}
+</form>
+<div class="panel">
+  {% for order in orders %}{% include "accounts/_order_row.html" %}
+  {% empty %}
+  <div class="empty text-center py-4"><i class="bi bi-box-seam"></i><h2 class="h4">{% if q or status %}No orders match{% else %}No orders yet{% endif %}</h2><p>{% if q or status %}Try a different search or clear the filter.{% else %}When you place an order it will show up here.{% endif %}</p><a class="btn btn-brand" href="{% url 'products' %}">Browse products</a></div>
+  {% endfor %}
+</div>
+{% if page.paginator.num_pages > 1 %}
+<nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Pages">
+  {% if page.has_previous %}<a class="btn btn-outline-brand btn-sm" href="?page={{ page.previous_page_number }}&q={{ q|urlencode }}&status={{ status }}">Newer</a>{% else %}<span></span>{% endif %}
+  <span class="small text-muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn-outline-brand btn-sm" href="?page={{ page.next_page_number }}&q={{ q|urlencode }}&status={{ status }}">Older</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

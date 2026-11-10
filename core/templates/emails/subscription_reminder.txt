@@ -1,0 +1,10 @@
+{% autoescape off %}Hi {{ sub.user.first_name|default:"there" }},
+
+Your Subscribe & Save order will be placed on {{ sub.next_date|date:"D, d M Y" }}:
+{{ sub.product.name }} ({{ sub.product.pack }}) x {{ sub.quantity }} - Rs {{ unit }} each, total Rs {{ total }}, pay on delivery.
+
+Skip, pause or change it: {{ account_url }}
+
+If you do nothing, we will place the order for you.
+
+Credit Lifesciences{% endautoescape %}

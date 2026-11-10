@@ -1,0 +1,32 @@
+{# One form field with floating label. Variables: field, optional hide_help #}
+<div class="field mb-3 {% if field.errors %}has-error{% endif %}">
+  {% if field.field.widget.input_type == 'checkbox' %}
+    <label class="check-row">{{ field }} <span>{{ field.label }}</span></label>
+  {% elif field.field.widget.input_type == 'password' %}
+    <div class="form-floating pw-field">
+      {{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      <button type="button" class="pw-toggle" data-pw-toggle aria-label="Show password" aria-pressed="false"><i class="bi bi-eye"></i></button>
+    </div>
+    {% if field.name == 'password1' or field.name == 'new_password1' %}
+    <div class="pw-meter" data-pw-meter data-target="{{ field.id_for_label }}" data-score="0">
+      <div class="pw-bars"><i></i><i></i><i></i><i></i></div>
+      <span class="pw-label">Password strength</span>
+    </div>
+    <ul class="pw-rules" data-pw-rules>
+      <li data-rule="len"><i class="bi bi-circle"></i> 8 or more characters</li>
+      <li data-rule="mix"><i class="bi bi-circle"></i> Letters and numbers</li>
+      <li data-rule="case"><i class="bi bi-circle"></i> Upper and lower case</li>
+      <li data-rule="sym"><i class="bi bi-circle"></i> A symbol, or 12+ characters</li>
+    </ul>
+    {% endif %}
+  {% elif field.name == 'phone' %}
+    <div class="input-group phone-group">
+      <span class="input-group-text">+91</span>
+      <div class="form-floating">{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+    </div>
+  {% else %}
+    <div class="form-floating">{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+  {% endif %}
+  {% if field.help_text and field.name != 'password1' and field.name != 'new_password1' %}<div class="form-note mt-1">{{ field.help_text|safe }}</div>{% endif %}
+  {% for e in field.errors %}<div class="err"><i class="bi bi-exclamation-circle"></i> {{ e }}</div>{% endfor %}
+</div>

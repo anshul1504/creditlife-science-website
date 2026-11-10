@@ -1,0 +1,6 @@
+{% autoescape off %}Hi {{ name }},
+
+{{ heading }}. {{ message }}
+
+Questions? {{ SITE.phones.0.0 }} | {{ SITE.email }}
+{% endautoescape %}

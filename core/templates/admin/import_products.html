@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; <a href="{% url 'admin:core_product_changelist' %}">Products</a> &rsaquo; Import</div>{% endblock %}
+{% block content %}
+<p>Upload a CSV to update prices, MRP, sale prices, HSN/GST and stock batches in one go. The first row must be a header. Only <b>slug</b> is required.</p>
+<pre style="background:#f6f6f6;padding:10px;border-radius:8px;overflow:auto">slug,price,mrp,sale_price,hsn_code,gst_rate,batch_no,expiry,quantity
+npr-hb-syrup,249,299,0,30049011,12,B2401,2027-06-30,240</pre>
+<p>A row with <b>batch_no</b>, <b>expiry</b> and <b>quantity</b> adds or sets that batch (and switches stock tracking on). The file is applied all or nothing.</p>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+  <p><input type="file" name="file" accept=".csv,text/csv" required></p>
+  <p><label><input type="checkbox" name="dry_run" checked> Check only (do not save)</label></p>
+  <p><button class="button default" type="submit">Upload</button></p>
+</form>
+{% if done %}
+  {% if errors %}<h2 style="color:#ba2121">Nothing was saved: {{ errors|length }} problem(s)</h2><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  {% else %}<h2>{% if dry_run %}Check passed. Untick &ldquo;Check only&rdquo; and upload again to save.{% else %}Saved.{% endif %} {{ changes|length }} change(s):</h2><ul>{% for c in changes %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+{% endif %}
+{% endblock %}

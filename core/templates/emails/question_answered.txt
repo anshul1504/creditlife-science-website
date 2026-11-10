@@ -1,0 +1,8 @@
+{% autoescape off %}We answered your question about {{ q.product.name }}.
+
+Q: {{ q.question }}
+A: {{ q.answer }}
+
+See it on the website: {{ product_url }}
+
+Credit Lifesciences{% endautoescape %}

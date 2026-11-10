@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}Order placed | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container confirm">
+    <div class="text-center">
+      <div class="check"><i class="bi bi-check-lg"></i></div>
+      <h1>Thank you, {{ order.name|truncatewords:1 }}!</h1>
+      <p class="lead">Your order <b>{{ order.number }}</b> has been placed. We will confirm it shortly.</p>
+    </div>
+    <div class="panel mt-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h3>Delivering to</h3>
+          <p class="mb-0">{{ order.name }}<br>{{ order.address|linebreaksbr }}<br>{{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>{{ order.phone }}</p>
+        </div>
+        <div class="col-md-6">
+          <h3>Payment</h3>
+          {% if order.paid_online %}<p class="mb-0"><span class="status status-paid">Paid online</span><br><b>&#8377;{{ order.total }}</b> received{% if order.razorpay_payment_id %}<br><small class="text-muted">Reference {{ order.razorpay_payment_id }}</small>{% endif %}</p>{% else %}<p class="mb-0">{{ order.get_payment_method_display }}<br><b>&#8377;{{ order.total }}</b> payable on delivery</p>{% endif %}
+        </div>
+      </div>
+      <hr>
+      <ul class="mini-items">
+        {% for i in order.items.all %}<li><div><b>{{ i.product_name }}</b><span>{{ i.pack }} &times; {{ i.quantity }}</span></div><em>&#8377;{{ i.line_total }}</em></li>{% endfor %}
+      </ul>
+      <dl class="totals">
+        <div><dt>Subtotal</dt><dd>&#8377;{{ order.subtotal }}</dd></div>
+        {% if order.discount %}<div class="disc"><dt>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</dt><dd>-&#8377;{{ order.discount }}</dd></div>{% endif %}
+        <div><dt>Delivery</dt><dd>{% if order.shipping %}&#8377;{{ order.shipping }}{% else %}Free{% endif %}</dd></div>
+        <div class="total"><dt>Total</dt><dd>&#8377;{{ order.total }}</dd></div>
+      </dl>
+    </div>
+    <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+      <a class="btn btn-brand btn-lg" href="{% url 'products' %}">Continue shopping</a>
+      <a class="btn btn-outline-brand btn-lg" href="{% url 'track' %}">Track order</a>
+    </div>
+    <p class="text-center text-muted small mt-4">
+      {% if order.email %}We have emailed your order confirmation to {{ order.email }}. {% endif %}
+      {% if user.is_authenticated %}Find this order any time in <a href="{% url 'account_orders' %}">My orders</a>.
+      {% else %}Save your order number to track it later, or <a href="{% url 'register' %}">create an account</a> to see all your orders in one place.{% endif %}
+    </p>
+  </div>
+</section>
+{% endblock %}

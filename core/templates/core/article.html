@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+{% load core_extras %}
+{% block title %}{{ article.title }} | Credit Lifesciences{% endblock %}
+{% block description %}{{ article.meta_description|default:article.summary }}{% endblock %}
+{% block robots %}{% if not article.is_published %}<meta name="robots" content="noindex">{% endif %}{% endblock %}
+{% block content %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"{{ article.title|escapejs }}","datePublished":"{{ article.published_at|date:'c' }}","author":{"@type":"Organization","name":"{{ article.author|escapejs }}"},"publisher":{"@type":"Organization","name":"Credit Lifesciences"}}</script>
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'blog' %}">Health library</a></li><li class="breadcrumb-item active">Article</li></ol></nav>
+    <h1>{{ article.title }}</h1>
+    <p>{{ article.published_at|date:"d M Y" }} &middot; {{ article.author }}{% if not article.is_published %} &middot; <b>Draft (staff only)</b>{% endif %}</p>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    <article class="legal content-copy mx-auto" style="max-width:760px">
+      {% if article.cover %}<img src="{{ article.cover.url }}" alt="" class="img-fluid rounded-4 mb-4">{% endif %}
+      {{ article.body|rich }}
+      <p class="small text-muted mt-4">This article is for general information only and is not medical advice. Talk to a doctor before starting or changing any treatment. See our <a href="{% url 'disclaimer' %}">medical disclaimer</a>.</p>
+    </article>
+    {% if products %}
+    <h2 class="h4 mt-5 mb-3">From our range</h2>
+    <div class="row g-4">{% for p in products %}<div class="col-sm-6 col-lg-4">{% include "core/_product_card.html" %}</div>{% endfor %}</div>
+    {% endif %}
+    {% if more %}
+    <h2 class="h4 mt-5 mb-3">Keep reading</h2>
+    <div class="row g-4">{% for a in more %}<div class="col-md-4"><a class="post-card" href="{{ a.get_absolute_url }}"><div class="post-body"><h3 class="h6">{{ a.title }}</h3><small>{{ a.published_at|date:"d M Y" }}</small></div></a></div>{% endfor %}</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Thank you for your order!</h1>
+<p>Hi {{ order.name }}, we have received your order <b style="color:#101c2b;">{{ order.number }}</b>. Our team will confirm it shortly and you will get an email at every step.</p>
+{% if order.paid_online %}<p style="padding:14px 18px;background:#e6f2ec;border-radius:10px;color:#0a5e42;margin:0 0 6px;"><b>Payment received:</b> &#8377;{{ order.total }} (reference {{ order.razorpay_payment_id }}).</p>{% endif %}
+{% include "emails/_order_table.html" %}
+<p style="margin:20px 0 4px;font-weight:600;color:#101c2b;">Delivering to</p>
+<p style="margin:0;">{{ order.name }}<br>{{ order.address|linebreaksbr }}<br>{{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>{{ order.phone }}</p>
+<p style="margin:24px 0;"><a href="{% if orders_url %}{{ orders_url }}{% else %}{{ track_url }}{% endif %}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">{% if orders_url %}View my orders{% else %}Track my order{% endif %}</a></p>
+<p style="font-size:13px;color:#667385;">{% if not orders_url %}To track this order, use order number {{ order.number }} and the mobile number you gave us ({{ order.phone }}). {% endif %}{% if not order.paid_online %}Pay cash on delivery when your order arrives.{% endif %}</p>
+{% endblock %}

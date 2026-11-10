@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">You are on the list</h1>
+<p>Thank you for subscribing to Credit Lifesciences. We will send you occasional health tips, product news and offers. No spam, ever.</p>
+<p style="margin:24px 0;"><a href="{{ shop_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Browse our range</a></p>
+<p style="font-size:12px;color:#667385;">Changed your mind? <a href="{{ unsubscribe_url }}" style="color:#0e7a55;">Unsubscribe in one click</a>.</p>
+{% endblock %}

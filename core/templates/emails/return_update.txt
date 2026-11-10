@@ -1,0 +1,12 @@
+{% autoescape off %}Hi {{ order.name }},
+
+{{ heading }}. {{ message }}
+
+Order: {{ order.number }}
+Item: {{ req.quantity }} x {{ req.item.product_name }}
+Reason: {{ req.get_reason_display }}
+{% if req.staff_note and req.status != 'rejected' %}Note from us: {{ req.staff_note }}
+{% endif %}
+Questions? {{ SITE.phones.0.0 }} | {{ SITE.email }}
+
+Credit Lifesciences{% endautoescape %}

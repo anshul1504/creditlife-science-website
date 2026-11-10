@@ -1,0 +1,40 @@
+# Local production-like stack: the web app plus PostgreSQL.
+#   docker compose up --build
+# Put secrets in .env (see .env.example). Never commit that file.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: creditlife
+      POSTGRES_USER: creditlife
+      POSTGRES_PASSWORD: change-me
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  web:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://creditlife:change-me@db:5432/creditlife
+      DJANGO_DEBUG: "0"
+      DJANGO_SSL_REDIRECT: "0"   # TLS is terminated in front of the container
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+  worker:
+    # Sends queued emails and nothing else. Only needed when EMAIL_QUEUE=1 is set in .env.
+    build: .
+    command: python manage.py run_worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://creditlife:change-me@db:5432/creditlife
+      DJANGO_DEBUG: "0"
+    depends_on:
+      - db
+    profiles: ["worker"]
+volumes:
+  pgdata:
+  media:

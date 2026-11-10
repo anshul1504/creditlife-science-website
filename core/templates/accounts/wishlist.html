@@ -1,0 +1,11 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Wishlist | Credit Lifesciences{% endblock %}
+{% block account_title %}Wishlist{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Wishlist</li>{% endblock %}
+{% block account_content %}
+{% if products %}
+<div class="row g-4">{% for p in products %}<div class="col-sm-6 col-xl-4">{% include "core/_product_card.html" %}</div>{% endfor %}</div>
+{% else %}
+<div class="panel empty text-center"><i class="bi bi-heart"></i><h2 class="h4">Your wishlist is empty</h2><p>Tap the heart on any product to save it here.</p><a class="btn btn-brand" href="{% url 'products' %}">Browse products</a></div>
+{% endif %}
+{% endblock %}

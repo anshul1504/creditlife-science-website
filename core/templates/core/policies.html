@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}Shipping &amp; Replacement Policy | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Shipping &amp; replacement policy</h1></div></section>
+<section class="section pt-4"><div class="container legal">
+  {% include "core/_draft_notice.html" %}
+  <h2>Who can order online</h2>
+  <p>Online ordering is for registered distributors and authorised business partners. Prices are visible to everyone. You can also place an order through our sales team on WhatsApp or by sending an order enquiry. Prescription (Rx) medicines are not sold to the public and are supplied only to licensed trade customers.</p>
+  <h2>Payment</h2>
+  <p>We accept UPI, debit cards, credit cards and net banking. An online order is confirmed automatically after successful payment.{% if SHOP.cod_enabled %} Cash on delivery may also be offered on some orders.{% endif %}</p>
+  <h2>Shipping charges</h2>
+  <p>The buyer bears the shipping cost. Charges depend on the third-party delivery service and the applicable shipping rates, and are shown before you pay.</p>
+  <h2>Delivery time</h2>
+  <p>Orders are usually delivered in {{ SHOP.delivery_days.0 }} to {{ SHOP.delivery_days.1 }} business days. Delivery is by a third-party delivery service, so exact timing depends on the service and your location.</p>
+  <h2>Damaged goods and replacement</h2>
+  <p>Replacement requests are accepted only for goods received in a damaged condition. To request a replacement, please provide an unboxing video that shows the package being opened and the condition of the goods. We review the evidence before approving a replacement. You can open a request from the order page in your account, or contact us on {{ SITE.phones.0.0 }} or {{ SITE.email }}.</p>
+  <p>We do not offer refunds, or returns for reasons other than damage, and replacements are not automatic: each request is reviewed first.</p>
+  <h2>Contact</h2>
+  <p>Questions about an order? Call or WhatsApp {{ SITE.phones.0.0 }}, or write to <a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a>.</p>
+</div></section>
+{% endblock %}

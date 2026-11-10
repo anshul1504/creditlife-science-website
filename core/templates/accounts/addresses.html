@@ -1,0 +1,22 @@
+{% extends "accounts/layout.html" %}
+{% block title %}My addresses | Credit Lifesciences{% endblock %}
+{% block account_title %}Saved addresses{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Addresses</li>{% endblock %}
+{% block account_content %}
+<div class="row g-4">
+  {% for a in addresses %}
+  <div class="col-md-6">
+    <div class="panel h-100 addr-card">
+      <div class="d-flex justify-content-between align-items-start mb-2"><b>{{ a.label }}</b>{% if a.is_default %}<span class="status status-confirmed">Default</span>{% endif %}</div>
+      <p>{{ a.name }}<br>{{ a.address|linebreaksbr }}<br>{{ a.city }}, {{ a.state }} - {{ a.pincode }}<br>{{ a.phone }}</p>
+      <div class="d-flex flex-wrap gap-3 small">
+        <a href="{% url 'address_edit' a.pk %}">Edit</a>
+        {% if not a.is_default %}<form method="post" action="{% url 'address_default' a.pk %}">{% csrf_token %}<button class="link-btn" type="submit">Make default</button></form>{% endif %}
+        <form method="post" action="{% url 'address_delete' a.pk %}" data-confirm="Remove this address?">{% csrf_token %}<button class="link-btn danger" type="submit">Delete</button></form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  <div class="col-md-6"><a class="addr-add" href="{% url 'address_new' %}"><i class="bi bi-plus-circle"></i> Add a new address</a></div>
+</div>
+{% endblock %}

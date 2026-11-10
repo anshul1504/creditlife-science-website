@@ -1,0 +1,27 @@
+{% load static %}{% if not user.is_authenticated %}
+<div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-labelledby="amTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <button type="button" class="am-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      <div class="am-grid">
+        <aside class="am-brand">
+          <div>
+            <span class="ab-kicker">Credit Lifesciences</span>
+            <h2 id="amTitle">Your health essentials, one sign-in away</h2>
+            <p class="ab-sub">Sign in with a one-time code. No password to remember, and your account is secure.</p>
+            <ul class="ab-points">
+              <li><i class="bi bi-credit-card"></i><div><b>Pay online</b><span>UPI, cards and net banking</span></div></li>
+              <li><i class="bi bi-geo-alt"></i><div><b>Track every order</b><span>Live status and email updates</span></div></li>
+              <li><i class="bi bi-heart"></i><div><b>Save your favourites</b><span>Wishlist and saved addresses</span></div></li>
+            </ul>
+          </div>
+          <img src="{% static 'img/logo-credit.png' %}" alt="Credit Lifesciences" class="am-logo">
+        </aside>
+        <div class="am-body">
+          {% include "accounts/_flow.html" %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

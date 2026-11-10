@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Welcome, {{ user.first_name|default:"there" }}!</h1>
+<p>Your email is verified and your account is ready. Here is what you can do:</p>
+<ul style="padding-left:20px;margin:12px 0 24px;">
+  <li>Order our digestive care, nutrition and joint care products with cash on delivery</li>
+  <li>Save addresses for faster checkout</li>
+  <li>Track every order and re-order in one tap</li>
+  <li>Review products you have used</li>
+</ul>
+<p><a href="{{ shop_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Start shopping</a></p>
+<p style="font-size:13px;color:#667385;">You can manage your details any time in <a href="{{ account_url }}" style="color:#0e7a55;">My account</a>.</p>
+{% endblock %}

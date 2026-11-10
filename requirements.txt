@@ -1,0 +1,10 @@
+Django>=5.2,<6.0
+Pillow>=10.0            # product image uploads
+razorpay>=2.0,<3.0      # online payments
+whitenoise>=6.6         # static files in production
+gunicorn>=22.0          # production web server
+psycopg[binary]>=3.1    # PostgreSQL (used when DATABASE_URL is set)
+reportlab>=4.0           # GST invoice PDFs
+django-otp>=1.5          # staff two-factor for the admin
+requests>=2.31           # courier API calls
+django-jazzmin>=3.0,<4.0   # admin theme

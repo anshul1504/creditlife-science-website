@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+{% block title %}Contact Us | Credit Lifesciences{% endblock %}
+{% block description %}Contact Credit Lifesciences for product, order, business partnership or general queries, complaints and feedback. Phone, WhatsApp and email.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Contact</li></ol></nav>
+    <span class="eyebrow">We are here to help</span>
+    <h1>Contact us</h1>
+    <p>Product, order, business partnership or general queries, and complaints or feedback: choose the enquiry type and we will get back to you.</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-5 order-lg-2">
+        <div class="contact-side">
+          <h2 class="h5 mb-3">Reach us directly</h2>
+          <div class="contact-cards">
+            {% for label, tel in SITE.phones %}<a class="cc" href="tel:{{ tel }}"><i class="bi bi-telephone-fill"></i><div><span>Phone</span><b>{{ label }}</b></div></a>{% endfor %}
+            <a class="cc cc-wa" href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i><div><span>WhatsApp</span><b>Chat with our team</b></div></a>
+            <a class="cc" href="mailto:{{ SITE.email }}"><i class="bi bi-envelope-fill"></i><div><span>Official email</span><b>{{ SITE.email }}</b></div></a>
+            <a class="cc" href="mailto:{{ SITE.sales_email }}"><i class="bi bi-briefcase-fill"></i><div><span>Sales / business enquiries</span><b>{{ SITE.sales_email }}</b></div></a>
+            <a class="cc" href="https://www.google.com/maps/search/?api=1&amp;query={{ SITE.address|urlencode }}" target="_blank" rel="noopener"><i class="bi bi-geo-alt-fill"></i><div><span>Registered office</span><b class="small-b">{{ SITE.address }}</b></div></a>
+          </div>
+
+          <div class="route-cards">
+            <a href="{% url 'distributor' %}"><i class="bi bi-diagram-3"></i><div><b>Want to become a distributor?</b><span>Use the distributor enquiry form</span></div><i class="bi bi-arrow-right"></i></a>
+            <a href="{% url 'faqs' %}"><i class="bi bi-question-circle"></i><div><b>Quick answers</b><span>Read the frequently asked questions</span></div><i class="bi bi-arrow-right"></i></a>
+          </div>
+
+          <div class="social-line">
+            <span>Follow us</span>
+            {% for label, icon, url in SITE.social %}{% if url %}<a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label }}"><i class="bi {{ icon }}"></i></a>{% endif %}{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 order-lg-1">
+        <form method="post" class="enq-form form-card" novalidate id="enqForm">
+          {% csrf_token %}
+          <h2 class="h4">Send us an enquiry</h2>
+          <p class="form-intro">Fill in the form and our team will respond.</p>
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="hp" aria-hidden="true">{{ form.website.label_tag }} {{ form.website }}</div>
+          <div class="row g-3">
+            <div class="col-md-6">{{ form.topic.label_tag }}{{ form.topic }}{% for e in form.topic.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.kind.label_tag }}{{ form.kind }}</div>
+            <div class="col-md-6">{{ form.name.label_tag }}{{ form.name }}{% for e in form.name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.organisation.label_tag }}{{ form.organisation }}</div>
+            <div class="col-md-6">{{ form.phone.label_tag }}{{ form.phone }}{% for e in form.phone.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}{% for e in form.email.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.city.label_tag }}{{ form.city }}{% for e in form.city.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.product.label_tag }}{{ form.product }}</div>
+            <div class="col-12">{{ form.message.label_tag }}{{ form.message }}{% for e in form.message.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+          </div>
+          <button class="btn btn-brand btn-lg mt-4" type="submit"><span>Send enquiry</span> <i class="bi bi-send"></i></button>
+          <p class="form-note">We use your details only to respond to this enquiry. See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

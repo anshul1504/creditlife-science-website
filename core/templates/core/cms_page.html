@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% load core_extras %}
+{% block title %}{{ page.title }} | Credit Lifesciences{% endblock %}
+{% block description %}{{ page.meta_description|default:page.title }}{% endblock %}
+{% block robots %}{% if not page.is_published %}<meta name="robots" content="noindex">{% endif %}{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>{{ page.title }}</h1></div></section>
+<section class="section pt-4"><div class="container legal content-copy">
+  {% if not page.is_published %}<div class="alert alert-warning small"><b>Draft:</b> only staff can see this page.</div>{% endif %}
+  {{ page.body|rich }}
+</div></section>
+{% endblock %}

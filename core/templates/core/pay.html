@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Complete your payment | Credit Lifesciences{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'cart' %}">Cart</a></li><li class="breadcrumb-item active">Payment</li></ol></nav>
+    <h1>Complete your payment</h1>
+    <p>Order <b>{{ order.number }}</b> is waiting for your payment of &#8377;{{ order.total }}.</p>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container pay-wrap">
+    {% csrf_token %}
+    <div class="panel">
+      <ul class="mini-items">
+        {% for i in order.items.all %}<li><div><b>{{ i.product_name }}</b><span>{{ i.pack }} &times; {{ i.quantity }}</span></div><em>&#8377;{{ i.line_total }}</em></li>{% endfor %}
+      </ul>
+      <dl class="totals">
+        <div><dt>Subtotal</dt><dd>&#8377;{{ order.subtotal }}</dd></div>
+        {% if order.discount %}<div class="disc"><dt>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</dt><dd>-&#8377;{{ order.discount }}</dd></div>{% endif %}
+        <div><dt>Delivery</dt><dd>{% if order.shipping %}&#8377;{{ order.shipping }}{% else %}Free{% endif %}</dd></div>
+        <div class="total"><dt>Amount to pay</dt><dd>&#8377;{{ order.total }}</dd></div>
+      </dl>
+      <button class="btn btn-brand btn-lg w-100" type="button" id="payBtn"><i class="bi bi-lock"></i> <span>Pay &#8377;{{ order.total }}</span></button>
+      <p class="pay-msg" id="payMsg" role="status" aria-live="polite"></p>
+      <ul class="pay-methods"><li><i class="bi bi-phone"></i> UPI</li><li><i class="bi bi-credit-card"></i> Cards</li><li><i class="bi bi-bank"></i> Net banking</li><li><i class="bi bi-wallet2"></i> Wallets</li></ul>
+      <p class="sum-note mb-0 text-center">Payments are processed securely by Razorpay. We never see or store your card details.</p>
+      <p class="text-center mt-3 mb-0"><a href="{% url 'cart' %}">Change my cart</a> &middot; <a href="{% url 'contact' %}">Need help?</a></p>
+    </div>
+  </div>
+</section>
+{{ rz|json_script:"rz-config" }}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="{% static 'js/pay.js' %}"></script>
+{% endblock %}

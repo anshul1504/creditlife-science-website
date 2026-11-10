@@ -1,0 +1,15 @@
+{# Variables (optional): heading, text #}
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-inner">
+      <div>
+        <h2>{{ heading|default:"Building Trusted Partnerships. Serving Health." }}</h2>
+        <p>{{ text|default:"Talk to our team about a distribution partnership, or explore the products we market." }}</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-light btn-lg cta-primary" href="{% url 'distributor' %}">Become a Distributor</a>
+        <a class="btn btn-ghost-w btn-lg" href="{% url 'contact' %}">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>

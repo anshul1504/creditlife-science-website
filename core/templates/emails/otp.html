@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Your {{ purpose_label }} code</h1>
+<p>Use this code to continue. It is valid for {{ minutes }} minutes and can be used only once.</p>
+<p style="margin:26px 0;text-align:center;"><span style="display:inline-block;padding:16px 28px;background:#f6f3ec;border:1px solid #e7e2d6;border-radius:14px;font-size:34px;font-weight:600;letter-spacing:10px;color:#0b2239;">{{ code }}</span></p>
+<p style="font-size:13px;color:#667385;">Never share this code with anyone. Credit Lifesciences will never ask you for it by phone or message. If you did not request it, you can safely ignore this email.</p>
+{% endblock %}

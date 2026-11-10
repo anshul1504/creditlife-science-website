@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block auth_modal %}{% endblock %}
+{% block content %}
+<section class="auth-stage">
+  <div class="auth-card2">
+    <a class="am-close" href="{% url 'home' %}" aria-label="Close and go to the home page"><i class="bi bi-x-lg"></i></a>
+    <div class="am-grid">
+      <aside class="am-brand">
+        <div>
+          <span class="ab-kicker">{% block brand_kicker %}Credit Lifesciences{% endblock %}</span>
+          <h2>{% block brand_title %}Your health essentials, one sign-in away{% endblock %}</h2>
+          <p class="ab-sub">{% block brand_sub %}Sign in with a one-time code. No password to remember, and your account is secure.{% endblock %}</p>
+          <ul class="ab-points">
+            {% block brand_points %}
+            <li><i class="bi bi-credit-card"></i><div><b>Pay online</b><span>UPI, cards and net banking</span></div></li>
+            <li><i class="bi bi-geo-alt"></i><div><b>Track every order</b><span>Live status and email updates</span></div></li>
+            <li><i class="bi bi-heart"></i><div><b>Save your favourites</b><span>Wishlist and saved addresses</span></div></li>
+            {% endblock %}
+          </ul>
+        </div>
+        <img src="{% static 'img/logo-credit.png' %}" alt="Credit Lifesciences" class="am-logo">
+      </aside>
+      <div class="am-body">
+        {% block auth_head %}
+        {% block auth_icon %}{% endblock %}
+        <h1 class="flow-title">{% block auth_title %}{% endblock %}</h1>
+        <p class="flow-sub">{% block auth_sub %}{% endblock %}</p>
+        {% endblock %}
+        {% block auth_body %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

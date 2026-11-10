@@ -1,0 +1,29 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Subscriptions | Credit Lifesciences{% endblock %}
+{% block account_title %}Subscribe &amp; Save{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Subscriptions</li>{% endblock %}
+{% block account_content %}
+<p class="text-muted">Get your regular products delivered on a schedule and save {{ discount_pct }}%. Orders are placed automatically and paid on delivery. Pause, skip or cancel any time.</p>
+{% for s in subs %}
+<div class="panel mb-3">
+  <div class="d-flex flex-wrap justify-content-between gap-2">
+    <div>
+      <h2 class="h5 mb-1"><a href="{{ s.product.get_absolute_url }}">{{ s.product.name }}</a> <small class="text-muted">&times; {{ s.quantity }}</small></h2>
+      <p class="mb-1 small">{{ s.get_interval_days_display }} &middot; &#8377;{{ s.unit_price }} each (you save {{ discount_pct }}%)</p>
+      <p class="mb-0 small text-muted">{% if s.status == 'paused' %}Paused{% else %}Next delivery: <b>{{ s.next_date|date:"D, d M Y" }}</b>{% endif %}{% if s.address %} &middot; to {{ s.address.city }} {{ s.address.pincode }}{% endif %}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2 align-self-start">
+      {% if s.status == 'active' %}
+      <form method="post" action="{% url 'subscription_action' s.pk 'skip' %}">{% csrf_token %}<button class="btn btn-outline-brand btn-sm">Skip next</button></form>
+      <form method="post" action="{% url 'subscription_action' s.pk 'pause' %}">{% csrf_token %}<button class="btn btn-outline-brand btn-sm">Pause</button></form>
+      {% else %}
+      <form method="post" action="{% url 'subscription_action' s.pk 'resume' %}">{% csrf_token %}<button class="btn btn-brand btn-sm">Resume</button></form>
+      {% endif %}
+      <form method="post" action="{% url 'subscription_action' s.pk 'cancel' %}" data-confirm="Cancel this subscription?">{% csrf_token %}<button class="btn btn-outline-danger btn-sm">Cancel</button></form>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="empty text-center"><i class="bi bi-arrow-repeat"></i><h2>No subscriptions yet</h2><p>Choose &ldquo;Subscribe &amp; Save&rdquo; on any product page.</p><a class="btn btn-brand btn-lg" href="{% url 'products' %}">Shop products</a></div>
+{% endfor %}
+{% endblock %}

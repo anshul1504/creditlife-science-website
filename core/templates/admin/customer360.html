@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; <a href="{% url 'admin:auth_user_changelist' %}">Users</a> &rsaquo; Customer 360</div>{% endblock %}
+{% block content %}
+<style>
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+  .grid .k{border:1px solid var(--hairline-color,#ddd);border-radius:10px;padding:12px 14px}
+  .grid .k small{display:block;color:var(--body-quiet-color,#666)}
+  .grid .k b{font-size:1.4rem}
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+  table.dt{width:100%}
+</style>
+<p><b>{{ c.get_full_name|default:"(no name)" }}</b> &middot; {{ c.email }} &middot; {{ c.profile.phone|default:"no phone" }}
+  &middot; joined {{ c.date_joined|date:"d M Y" }}
+  &middot; email {% if c.profile.email_verified %}verified{% else %}not verified{% endif %}, phone {% if c.profile.phone_verified %}verified{% else %}not verified{% endif %}
+  &middot; <a href="{% url 'admin:auth_user_change' c.pk %}">Edit user</a></p>
+<div class="grid">
+  <div class="k"><small>Orders (not cancelled)</small><b>{{ order_count }}</b></div>
+  <div class="k"><small>Lifetime spend</small><b>&#8377;{{ spent }}</b></div>
+  <div class="k"><small>Average order</small><b>&#8377;{{ aov }}</b></div>
+  <div class="k"><small>Credit points</small><b>{{ points }}</b></div>
+  <div class="k"><small>Friends referred</small><b>{{ referrals }}</b></div>
+</div>
+{% if referred_by %}<p>Joined through a referral from <a href="{% url 'customer_360' referred_by.pk %}">{{ referred_by.email }}</a>.</p>{% endif %}
+{% if saved_cart %}<p>Cart left on the site: {{ saved_cart.data }} (updated {{ saved_cart.updated_at|date:"d M, H:i" }}{% if saved_cart.reminded_at %}, reminder sent{% endif %}).</p>{% endif %}
+<div class="two">
+  <div>
+    <h2>Orders</h2>
+    <table class="dt"><thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th></tr></thead>
+    {% for o in orders %}<tr><td><a href="{% url 'admin:core_order_change' o.pk %}">{{ o.number }}</a></td><td>{{ o.created_at|date:"d M Y" }}</td><td>{{ o.get_status_display }}</td><td>&#8377;{{ o.total }}</td></tr>{% empty %}<tr><td colspan="4">No orders.</td></tr>{% endfor %}</table>
+    <h2>Subscriptions</h2>
+    <table class="dt">{% for s in subscriptions %}<tr><td>{{ s.product.name }} &times; {{ s.quantity }}</td><td>{{ s.get_interval_days_display }}</td><td>{{ s.get_status_display }}</td><td>{{ s.next_date|date:"d M" }}</td></tr>{% empty %}<tr><td>None.</td></tr>{% endfor %}</table>
+  </div>
+  <div>
+    <h2>Returns</h2>
+    <table class="dt">{% for r in returns %}<tr><td><a href="{% url 'admin:core_returnrequest_change' r.pk %}">{{ r.order.number }}</a></td><td>{{ r.item.product_name }}</td><td>{{ r.get_status_display }}</td></tr>{% empty %}<tr><td>None.</td></tr>{% endfor %}</table>
+    <h2>Reviews and questions</h2>
+    <table class="dt">{% for r in reviews %}<tr><td>{{ r.product.name }}</td><td>{{ r.rating }}/5</td><td>{{ r.title }}</td></tr>{% endfor %}{% for q in questions %}<tr><td>{{ q.product.name }}</td><td colspan="2">Q: {{ q.question }}</td></tr>{% endfor %}</table>
+    <h2>Addresses</h2>
+    <table class="dt">{% for a in addresses %}<tr><td>{{ a.label }}</td><td>{{ a.address }}, {{ a.city }}, {{ a.state }} {{ a.pincode }}</td></tr>{% empty %}<tr><td>None saved.</td></tr>{% endfor %}</table>
+  </div>
+</div>
+{% endblock %}

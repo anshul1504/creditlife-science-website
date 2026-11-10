@@ -1,0 +1,23 @@
+{% autoescape off %}Hi {{ order.name }},
+
+Thank you for your order. We have received order {{ order.number }} and will confirm it shortly.
+
+{% for i in items %}{{ i.quantity }} x {{ i.product_name }} ({{ i.pack }}) - Rs {{ i.line_total }}
+{% endfor %}
+Subtotal: Rs {{ order.subtotal }}
+{% if order.discount %}Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}: -Rs {{ order.discount }}
+{% endif %}Delivery: {% if order.shipping %}Rs {{ order.shipping }}{% else %}Free{% endif %}
+Total ({{ order.get_payment_method_display }}): Rs {{ order.total }}
+
+{% if order.paid_online %}Payment received: Rs {{ order.total }} (reference {{ order.razorpay_payment_id }})
+
+{% endif %}Delivering to:
+{{ order.name }}
+{{ order.address }}
+{{ order.city }}, {{ order.state }} - {{ order.pincode }}
+{{ order.phone }}
+
+Track your order: {% if orders_url %}{{ orders_url }}{% else %}{{ track_url }} (order number {{ order.number }} + your mobile number){% endif %}
+
+Credit Lifesciences
+{{ SITE.phones.0.0 }} | {{ SITE.email }}{% endautoescape %}

@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% block title %}Distribution Network | Credit Lifesciences{% endblock %}
+{% block description %}Credit Lifesciences distribution presence across districts of Uttar Pradesh, with locations open for appointment and plans to expand across India.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Distribution Network</li></ol></nav>
+    <span class="eyebrow">Distribution network</span>
+    <h1>Growing Our Network. Expanding Healthcare Access.</h1>
+    <p>Present today in {{ counts.active }} district{{ counts.active|pluralize }} of Uttar Pradesh, with plans to expand across India.</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    {% include "core/_draft_notice.html" %}
+    <div class="row g-4 align-items-stretch net-intro">
+      <div class="col-lg-6">
+        <h2 class="sec-title">One company, many districts</h2>
+        <p class="sec-lead">We appoint authorised distributors in different districts. More than one distributor may operate in the same district, with specific territories allocated to each. Districts that are open for appointment welcome new enquiries.</p>
+        <div class="d-flex flex-wrap gap-3"><a class="btn btn-brand" href="{% url 'distributor' %}">Become a Distributor</a><a class="btn btn-outline-brand" href="{% url 'contact' %}">Talk to our team</a></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="net-stats">
+          <div class="net-stat net-active"><b>{{ counts.active }}</b><span>Active locations</span></div>
+          <div class="net-stat net-open"><b>{{ counts.open }}</b><span>Open for appointment</span></div>
+          <div class="net-stat net-upcoming"><b>{{ counts.upcoming }}</b><span>Upcoming locations</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="net-legend" role="group" aria-label="Filter districts by status">
+      <button type="button" class="net-chip on" data-net-filter="all">All districts ({{ districts|length }})</button>
+      {% for key, label in statuses %}<button type="button" class="net-chip net-{{ key }}" data-net-filter="{{ key }}"><i></i>{{ label }} ({% if key == 'active' %}{{ counts.active }}{% elif key == 'open' %}{{ counts.open }}{% else %}{{ counts.upcoming }}{% endif %})</button>{% endfor %}
+    </div>
+
+    <div class="dist-grid" id="netGrid" aria-live="polite">
+      {% for d in districts %}
+      <article class="dist-card net-{{ d.status }}" data-status="{{ d.status }}">
+        <header>
+          <span class="dist-icon"><i class="bi bi-geo-alt-fill"></i></span>
+          <div><h3>{{ d.name }}</h3><span class="dist-state">{{ d.state }}</span></div>
+          <span class="dist-tag">{{ d.get_status_display }}</span>
+        </header>
+        {% if d.entries %}
+        <ul class="dist-list">
+          {% for e in d.entries %}
+          <li><b>{{ e.firm_name }}</b>{% if e.address %}<span>{{ e.address }}</span>{% endif %}{% if e.contact_person %}<span>{{ e.contact_person }}</span>{% endif %}{% if e.mobile %}<a href="tel:{{ e.mobile }}"><i class="bi bi-telephone"></i> {{ e.mobile }}</a>{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="dist-empty"><i class="bi bi-hourglass-split"></i> Distributor details coming soon</p>
+        {% endif %}
+      </article>
+      {% empty %}
+      <p class="text-muted">District details will be published shortly.</p>
+      {% endfor %}
+    </div>
+    <p class="small text-muted mt-4">Locations are shown as cards rather than a geographic map. Statuses are updated by Credit Lifesciences as appointments change. Distributor contact details are published only with the distributor's consent.</p>
+  </div>
+</section>
+
+{% include "core/_cta_band.html" with heading="Grow Your Business. Build Lasting Partnerships. Make a Difference in Healthcare." text="Distributors from other districts and states are invited to contact us as we work towards expanding our network across India." %}
+{% endblock %}

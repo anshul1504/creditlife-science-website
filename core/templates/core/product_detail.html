@@ -1,0 +1,350 @@
+{% extends "core/base.html" %}
+{% load static core_extras %}
+{% block title %}{{ product.name }}{% if product.pack %} ({{ product.pack }}){% endif %} | Credit Lifesciences{% endblock %}
+{% block description %}{{ product.name }} - {{ product.subtitle }}. {{ product.summary|truncatechars:120 }}{% endblock %}
+{% block og_title %}{{ product.name }} | Credit Lifesciences{% endblock %}
+{% block og_image %}{{ gallery.0.url }}{% endblock %}
+{% block body_class %}page-product{% endblock %}
+{% block head_extra %}
+<style>:root{--accent: {{ product.accent }};}</style>
+{% if product.sellable %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"{{ product.name|escapejs }}","description":"{{ product.summary|escapejs }}",
+"image":[{% for g in gallery %}"{{ request.scheme }}://{{ request.get_host }}{{ g.url }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+"brand":{"@type":"Brand","name":"Credit Lifesciences"},
+{% if stats.count %}"aggregateRating":{"@type":"AggregateRating","ratingValue":"{{ stats.avg }}","reviewCount":"{{ stats.count }}"},{% endif %}
+"offers":{"@type":"Offer","priceCurrency":"INR","price":"{{ product.effective_price }}","availability":"https://schema.org/{% if product.in_stock %}InStock{% else %}OutOfStock{% endif %}","url":"{{ request.scheme }}://{{ request.get_host }}{{ product.get_absolute_url }}"}}
+</script>
+{% endif %}
+{% if faqs %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{% for f in faqs %}{"@type":"Question","name":"{{ f.question|escapejs }}","acceptedAnswer":{"@type":"Answer","text":"{{ f.answer|escapejs }}"}}{% if not forloop.last %},{% endif %}{% endfor %}]}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="pd-top">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'products' %}">Shop</a></li><li class="breadcrumb-item active">{{ product.name }}</li></ol></nav>
+    <div class="row g-4 g-xl-5">
+      <!-- Gallery -->
+      <div class="col-lg-6 pd-gallery-col">
+        <div class="gallery" data-gallery>
+          <div class="g-thumbs" role="tablist" aria-label="Product images">
+            {% for g in gallery %}
+            <button type="button" class="g-thumb {% if forloop.first %}active{% endif %}" data-src="{{ g.url }}" data-alt="{{ g.alt }}" data-fit="{{ g.fit }}" aria-label="Show image {{ forloop.counter }}"><img src="{{ g.url }}" alt="" loading="lazy" class="fit-{{ g.fit }}"></button>
+            {% endfor %}
+          </div>
+          <div class="g-main">
+            <img id="gMain" src="{{ gallery.0.url }}" alt="{{ gallery.0.alt }}" class="fit-{{ gallery.0.fit }}">
+            {% if product.is_rx %}<span class="tag tag-rx tag-lg">Rx</span>{% elif product.on_sale %}<span class="tag tag-sale tag-lg">Sale{% if product.discount_pct %} &middot; {{ product.discount_pct }}% off{% endif %}</span>{% elif product.discount_pct %}<span class="tag tag-save tag-lg">{{ product.discount_pct }}% off</span>{% endif %}
+            <button type="button" class="g-zoom" data-lightbox-open aria-label="View larger image"><i class="bi bi-arrows-fullscreen"></i></button>
+            <span class="g-count" data-g-count>1 / {{ gallery|length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buy panel -->
+      <div class="col-lg-6">
+        <div class="pd-info">
+          <span class="pd-brand">By <a href="{% url 'about' %}">Credit Lifesciences</a> &middot; {{ product.get_category_display }}</span>
+          <h1>{{ product.name }}</h1>
+          <p class="pd-sub">{{ product.subtitle }}</p>
+          <div class="pd-rating">
+            {% if stats.count %}
+              {% include "core/_stars.html" with pct=stats.pct avg=stats.avg %}
+              <a href="#reviews"><b>{{ stats.avg }}</b> &middot; {{ stats.count }} review{{ stats.count|pluralize }}</a>
+            {% else %}
+              <a href="#reviews">No reviews yet. Be the first to review</a>
+            {% endif %}
+            <span class="pd-pack"><i class="bi bi-box-seam"></i> {{ product.pack }}</span>
+          </div>
+
+          {% if product.sellable %}
+          <div class="buybox">
+            <div class="buy-price">
+              <b>&#8377;{{ product.effective_price }}</b>
+              {% if product.mrp > product.effective_price %}<s>MRP &#8377;{{ product.mrp }}</s><span class="save">{{ product.discount_pct }}% off</span>{% elif product.on_sale %}<s>&#8377;{{ product.price }}</s>{% endif %}
+              {% if product.on_sale and product.sale_ends %}<span class="sale-timer"><i class="bi bi-alarm"></i> Sale ends in <b data-countdown="{{ product.sale_ends.isoformat }}"></b></span>{% endif %}
+              <small>Inclusive of all taxes</small>
+            </div>
+            {% if product.in_stock %}
+            {% if SHOP.require_login_to_order and not user.is_authenticated %}
+            <div class="ord-gate">
+              <p class="small mb-3">Prices are visible to everyone. Online ordering is for registered distributors and authorised business partners.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-brand btn-lg" href="{% url 'login' %}?next={{ request.path|urlencode }}"><i class="bi bi-box-arrow-in-right"></i> Register / sign in to order</a>
+                <a class="btn btn-outline-brand btn-lg" href="https://wa.me/{{ SITE.whatsapp }}?text=Hello%2C%20I%20would%20like%20to%20order%20{{ product.name|urlencode }}%20({{ product.pack|urlencode }})" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Order on WhatsApp</a>
+              </div>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'cart_add' product.slug %}" data-add-cart class="buy-form">
+              {% csrf_token %}
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease quantity">&minus;</button>
+                <input type="number" name="qty" value="1" min="1" max="{{ SHOP.max_qty }}" inputmode="numeric" aria-label="Quantity">
+                <button type="button" data-step="1" aria-label="Increase quantity">+</button>
+              </div>
+              <button class="btn btn-brand btn-lg flex-fill" type="submit"><i class="bi bi-bag-plus"></i> Add to cart</button>
+              <button class="btn btn-dark btn-lg" type="submit" name="next" value="checkout">Buy now</button>
+            </form>
+            <a class="btn btn-outline-brand mt-2" href="https://wa.me/{{ SITE.whatsapp }}?text=Hello%2C%20I%20would%20like%20to%20order%20{{ product.name|urlencode }}%20({{ product.pack|urlencode }})" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Order via WhatsApp</a>
+            {% endif %}
+            {% if product.sellable and SHOP.consumer_features and user.is_authenticated %}
+            <form method="post" action="{% url 'subscribe' product.slug %}" class="sub-box">
+              {% csrf_token %}
+              <div class="sub-head"><i class="bi bi-arrow-repeat"></i> <b>Subscribe &amp; Save {{ SHOP.subscribe_discount_pct }}%</b> <small>Cash on delivery. Skip, pause or cancel any time.</small></div>
+              <div class="sub-row">
+                <select name="interval_days" class="form-select form-select-sm" aria-label="Delivery frequency">{% for v, label in subscribe_form.fields.interval_days.choices %}<option value="{{ v }}">{{ label }}</option>{% endfor %}</select>
+                <input type="number" name="quantity" value="1" min="1" max="{{ SHOP.max_qty }}" class="form-control form-control-sm" aria-label="Quantity per delivery">
+                <button class="btn btn-outline-brand btn-sm" type="submit">Subscribe</button>
+              </div>
+            </form>
+            {% endif %}
+            {% else %}
+            <p class="oos-lg"><i class="bi bi-x-circle"></i> Currently out of stock. <a href="{% url 'contact' %}?product={{ product.slug }}">Ask us when it is back</a>.</p>
+            {% endif %}
+            <div class="pd-actions">
+              {% if user.is_authenticated %}
+              <form method="post" action="{% url 'wishlist_toggle' product.slug %}" data-wishlist class="d-inline">{% csrf_token %}
+                <button type="submit" class="act-btn wish {% if product.id in WISHLIST_IDS %}on{% endif %}" aria-pressed="{% if product.id in WISHLIST_IDS %}true{% else %}false{% endif %}"><i class="bi {% if product.id in WISHLIST_IDS %}bi-heart-fill{% else %}bi-heart{% endif %}"></i> <span>{% if product.id in WISHLIST_IDS %}Saved{% else %}Save{% endif %}</span></button>
+              </form>
+              {% else %}
+              <a class="act-btn" href="{% url 'login' %}?next={{ request.path|urlencode }}"><i class="bi bi-heart"></i> Save</a>
+              {% endif %}
+              <a class="act-btn" href="{% url 'contact' %}?topic=product&amp;product={{ product.slug }}"><i class="bi bi-file-earmark-text"></i> Request catalogue</a>
+              <button type="button" class="act-btn" data-share data-title="{{ product.name }}"><i class="bi bi-share"></i> Share</button>
+            </div>
+          </div>
+
+          <div class="pin-check" data-pin-check data-url="{% url 'pincode_check' %}">
+            <label for="pinInput"><i class="bi bi-geo-alt"></i> Check delivery to your PIN code</label>
+            <div class="pin-row">
+              <input id="pinInput" type="text" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit PIN code" autocomplete="postal-code">
+              <button type="button" class="btn btn-outline-brand">Check</button>
+            </div>
+            <p class="pin-result" aria-live="polite"></p>
+          </div>
+
+          <ul class="pd-perks">
+            {% if SHOP.cod_enabled %}<li><i class="bi bi-cash-coin"></i><span><b>Cash on delivery</b>Pay when it arrives</span></li>{% else %}<li><i class="bi bi-credit-card"></i><span><b>Pay online</b>UPI, cards and net banking</span></li>{% endif %}
+            <li><i class="bi bi-truck"></i><span><b>Delivery</b>{{ SHOP.delivery_days.0 }}-{{ SHOP.delivery_days.1 }} business days; shipping charges are shown before payment</span></li>
+            <li><i class="bi bi-upc-scan"></i><span><b>Genuine product</b>Batch &amp; expiry on pack</span></li>
+          </ul>
+          {% else %}
+          <div class="buybox rx-box">
+            <p class="mb-3"><i class="bi bi-prescription2"></i> <b>Prescription medicine.</b> Not available for online purchase. It is supplied only against a prescription from a registered medical practitioner.</p>
+            <div class="d-flex flex-wrap gap-3">
+              <a class="btn btn-brand btn-lg" href="{% url 'contact' %}?product={{ product.slug }}">Enquire about {{ product.name }}</a>
+              <a class="btn btn-outline-brand btn-lg" href="tel:{{ SITE.phones.0.1 }}"><i class="bi bi-telephone"></i> Call us</a>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if product.highlights and not product.is_rx %}
+          <div class="badges">{% for h in product.highlights|csv %}<span><i class="bi bi-check-circle-fill"></i> {{ h }}</span>{% endfor %}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if product.is_rx %}
+<section class="container"><div class="rx-notice"><i class="bi bi-exclamation-triangle-fill"></i><div><b>Prescription medicine.</b> This information is intended for registered medical practitioners. It is not an advertisement to the public. Do not take this medicine without a prescription.</div></div></section>
+{% endif %}
+
+<!-- Section nav -->
+<div class="pd-nav-wrap">
+  <div class="container">
+    <nav class="pd-nav" id="pdNav" aria-label="Product sections">
+      <a href="#overview">Overview</a>
+      <a href="#composition">Composition</a>
+      {% if product.dosage|lines %}<a href="#directions">Directions</a>{% endif %}
+      {% if product.warnings|lines or product.side_effects|lines %}<a href="#safety">Safety</a>{% endif %}
+      <a href="#reviews">Reviews{% if stats.count %} ({{ stats.count }}){% endif %}</a>
+    </nav>
+  </div>
+</div>
+
+<section class="section pt-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-8">
+        <div class="pd-sec" id="overview">
+          <h2>Overview</h2>
+          <p>{{ product.summary }}</p>
+          {% if product.uses|lines and not product.is_rx %}
+          <h3>Key benefits &amp; uses</h3>
+          <ul class="tick">{% for l in product.uses|lines %}<li>{{ l }}</li>{% endfor %}</ul>
+          {% endif %}
+          {% if product.how_it_works|lines and not product.is_rx %}
+          <h3>How it works</h3>
+          <dl class="how">{% for name, role in product.how_it_works|pairs %}<dt>{{ name }}</dt><dd>{{ role }}</dd>{% endfor %}</dl>
+          {% endif %}
+        </div>
+
+        <div class="pd-sec" id="composition">
+          <h2>{{ product.composition_title }}</h2>
+          <table class="spec">
+            {% for name, amount in product.composition|pairs %}<tr><th>{{ name }}</th><td>{{ amount }}</td></tr>{% endfor %}
+          </table>
+          <p class="small text-muted mt-2">Refer to the pack label for the complete composition, batch number, manufacturing and expiry dates, and MRP.</p>
+          <h3>Product details</h3>
+          <table class="spec">
+            <tr><th>Dosage form</th><td>{{ product.dosage_form }}</td></tr>
+            <tr><th>Pack size</th><td>{{ product.pack }}</td></tr>
+            <tr><th>Category</th><td>{{ product.get_category_display }}</td></tr>
+            {% for label, value in manufacturer_rows %}<tr><th>{{ label }}</th><td>{{ value }}</td></tr>{% endfor %}
+          </table>
+        </div>
+
+        {% if product.dosage|lines %}
+        <div class="pd-sec" id="directions">
+          <h2>Directions for use</h2>
+          <ul class="tick">{% for l in product.dosage|lines %}<li>{{ l }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
+
+        {% if product.warnings|lines or product.side_effects|lines or product.storage|lines %}
+        <div class="pd-sec" id="safety">
+          <h2>Safety information</h2>
+          {% if product.side_effects|lines %}<h3>Possible side effects</h3><ul class="tick">{% for l in product.side_effects|lines %}<li>{{ l }}</li>{% endfor %}</ul>{% endif %}
+          {% if product.warnings|lines %}<h3>Warnings &amp; precautions</h3><ul class="tick warn">{% for l in product.warnings|lines %}<li>{{ l }}</li>{% endfor %}</ul>{% endif %}
+          {% if product.storage|lines %}<h3>Storage</h3><ul class="tick">{% for l in product.storage|lines %}<li>{{ l }}</li>{% endfor %}</ul>{% endif %}
+          <p class="note-box mt-4 mb-0"><i class="bi bi-info-circle"></i><span>Use only as directed by a healthcare professional. See the <a href="{% url 'disclaimer' %}">medical disclaimer</a>.</span></p>
+        </div>
+        {% endif %}
+
+        <div class="pd-sec" id="qa">
+          <h2>Questions &amp; answers</h2>
+          {% for q in questions %}
+          <div class="qa-item"><p class="mb-1"><b>Q:</b> {{ q.question }}</p><p class="mb-1"><b>A:</b> {{ q.answer|linebreaksbr }}</p><small class="text-muted">Asked by {{ q.user.first_name|default:"a customer" }} &middot; {{ q.created_at|date:"d M Y" }}</small></div>
+          {% empty %}<p class="text-muted">No questions yet. Be the first to ask.</p>{% endfor %}
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'ask_question' product.slug %}" class="qa-form">{% csrf_token %}{{ question_form.question }}<button class="btn btn-outline-brand" type="submit">Ask</button></form>
+          {% else %}<p class="mb-0"><a href="{% url 'login' %}?next={{ request.path|urlencode }}%23qa">Sign in</a> to ask a question.</p>{% endif %}
+        </div>
+
+        {% if faqs %}
+        <div class="pd-sec" id="faq">
+          <h2>Frequently asked questions</h2>
+          <div class="accordion faq-acc" id="pdFaq">
+            {% for f in faqs %}
+            <div class="accordion-item">
+              <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ f.pk }}" aria-expanded="false">{{ f.question }}</button></h3>
+              <div id="faq{{ f.pk }}" class="accordion-collapse collapse" data-bs-parent="#pdFaq"><div class="accordion-body">{{ f.answer|linebreaksbr }}</div></div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="pd-sec" id="reviews">
+          <h2>Ratings &amp; reviews</h2>
+          <div class="row g-4 align-items-center rv-summary">
+            <div class="col-sm-4 text-center">
+              {% if stats.count %}
+              <div class="rv-big">{{ stats.avg }}<small>/5</small></div>
+              {% include "core/_stars.html" with pct=stats.pct avg=stats.avg %}
+              <div class="text-muted small mt-1">{{ stats.count }} review{{ stats.count|pluralize }}</div>
+              {% else %}
+              <div class="rv-big">&ndash;</div>
+              <div class="text-muted small mt-1">No reviews yet</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-8">
+              {% for n, c, pct in bars %}
+              <div class="rv-bar"><span>{{ n }} <i class="bi bi-star-fill"></i></span><div><i style="width: {{ pct }}%"></i></div><em>{{ c }}</em></div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="rv-write">
+            {% if not user.is_authenticated %}
+              <p class="mb-0"><a href="{% url 'login' %}?next={{ request.path|urlencode }}%23reviews">Sign in</a> to write a review.</p>
+            {% elif not can_review %}
+              <p class="mb-0"><i class="bi bi-envelope-exclamation"></i> Please verify your email address to write a review.</p>
+            {% else %}
+              <h3>{% if user_review %}Update your review{% else %}Write a review{% endif %}</h3>
+              <form method="post" action="{% url 'review_submit' product.slug %}" data-review-form enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="star-input" role="radiogroup" aria-label="Your rating">
+                  {% for n in "12345" %}<button type="button" data-value="{{ n }}" aria-label="{{ n }} star{{ n|pluralize }}"><i class="bi bi-star"></i></button>{% endfor %}
+                </div>
+                {{ review_form.rating }}
+                <div class="mb-3">{{ review_form.title }}</div>
+                <div class="mb-3">{{ review_form.body }}</div>
+                <div class="mb-3"><label class="form-label small" for="{{ review_form.photo.id_for_label }}">{{ review_form.photo.label }}</label>{{ review_form.photo }}</div>
+                <button class="btn btn-brand" type="submit">{% if user_review %}Update review{% else %}Submit review{% endif %}</button>
+              </form>
+            {% endif %}
+          </div>
+
+          <div class="rv-list">
+            {% for r in reviews %}
+            <article class="rv">
+              <header>
+                {% include "core/_stars.html" with pct=r.rating|stars_pct avg=r.rating %}
+                {% if r.title %}<b>{{ r.title }}</b>{% endif %}
+              </header>
+              {% if r.body %}<p>{{ r.body|linebreaksbr }}</p>{% endif %}
+              {% if r.photo %}<a href="{{ r.photo.url }}" target="_blank" rel="noopener"><img class="rv-photo" src="{{ r.photo.url }}" alt="Photo from {{ r.user.first_name|default:'a customer' }}" loading="lazy"></a>{% endif %}
+              <button type="button" class="helpful {% if r.id in voted_ids %}on{% endif %}" data-helpful="{% url 'review_helpful' r.id %}"><i class="bi bi-hand-thumbs-up"></i> Helpful (<span>{{ r.helpful_count }}</span>)</button>
+              <footer>{{ r.user.first_name|default:"Customer" }} &middot; {{ r.created_at|date:"d M Y" }}{% if r.user_id in verified_ids %} &middot; <span class="verified"><i class="bi bi-patch-check-fill"></i> Verified purchase</span>{% endif %}</footer>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <aside class="side-stack">
+          <div class="help-card">
+            <h3>Need help?</h3>
+            <p>Questions about this product or your order? Our team is happy to help.</p>
+            <a class="btn btn-light w-100 mb-2" href="tel:{{ SITE.phones.0.1 }}"><i class="bi bi-telephone"></i> {{ SITE.phones.0.0 }}</a>
+            <a class="btn btn-ghost w-100" href="https://wa.me/{{ SITE.whatsapp }}?text=Hi%2C%20I%20have%20a%20question%20about%20{{ product.name|urlencode }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> WhatsApp us</a>
+          </div>
+          <div class="trust-card">
+            <ul>
+              <li><i class="bi bi-shield-check"></i> Marketed by Credit Lifesciences</li>
+              <li><i class="bi bi-arrow-repeat"></i> Received damaged goods? <a href="{% url 'policies' %}">See our replacement policy</a></li>
+              <li><i class="bi bi-geo-alt"></i> <a href="{% url 'track' %}">Track your order</a> any time</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-cream">
+  <div class="container">
+    <div class="section-head left reveal"><span class="kicker dark">More from Credit Lifesciences</span><h2>Customers also viewed</h2></div>
+    <div class="row g-4">
+      {% for p in related %}<div class="col-sm-6 col-lg-3 reveal" style="--i:{{ forloop.counter0 }}">{% include "core/_product_card.html" %}</div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if product.sellable and product.in_stock %}
+<div class="buy-sticky" role="region" aria-label="Quick purchase">
+  <div class="price"><b>&#8377;{{ product.effective_price }}</b>{% if product.mrp > product.effective_price %}<s>&#8377;{{ product.mrp }}</s>{% endif %}</div>
+  <form method="post" action="{% url 'cart_add' product.slug %}" data-add-cart>{% csrf_token %}<input type="hidden" name="qty" value="1"><button class="btn btn-brand" type="submit"><i class="bi bi-bag-plus"></i> Add to cart</button></form>
+</div>
+{% endif %}
+
+<!-- Lightbox -->
+<div class="modal fade" id="lightbox" tabindex="-1" aria-label="Product image viewer" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content lb">
+      <button type="button" class="lb-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      <button type="button" class="lb-nav lb-prev" aria-label="Previous image"><i class="bi bi-chevron-left"></i></button>
+      <img id="lbImg" src="" alt="">
+      <button type="button" class="lb-nav lb-next" aria-label="Next image"><i class="bi bi-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+{% endblock %}

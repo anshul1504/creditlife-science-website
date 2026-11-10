@@ -1,0 +1,28 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Return {{ req.reference }} | Credit Lifesciences{% endblock %}
+{% block account_title %}Return {{ req.reference }}{% endblock %}
+{% block crumb %}<li class="breadcrumb-item"><a href="{% url 'account_returns' %}">Returns</a></li><li class="breadcrumb-item active">{{ req.reference }}</li>{% endblock %}
+{% block account_content %}
+<div class="panel mb-4">
+  <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+    <div><h2 class="h5 mb-1">{{ req.item.product_name }} &times; {{ req.quantity }}</h2><span class="text-muted">Order <a href="{% url 'account_order' req.order.number %}">{{ req.order.number }}</a> &middot; requested {{ req.created_at|date:"d M Y" }}</span></div>
+    <span class="status status-{{ req.status }} align-self-start">{{ req.get_status_display }}</span>
+  </div>
+  {% if req.staff_note and req.status != 'requested' %}<p class="mb-3"><b>Note from us:</b> {{ req.staff_note }}</p>{% endif %}
+  <dl class="ret-facts">
+    {% if req.resolution %}<div><dt>Resolution</dt><dd>{{ req.get_resolution_display }}</dd></div>{% endif %}
+    {% if req.pickup_awb or req.pickup_date %}<div><dt>Pickup</dt><dd>{{ req.pickup_courier|default:"Our courier partner" }}{% if req.pickup_awb %}, tracking {{ req.pickup_awb }}{% endif %}{% if req.pickup_date %}, {{ req.pickup_date|date:"d M Y" }}{% endif %}</dd></div>{% endif %}
+    {% if req.refunded_at %}<div><dt>Refund</dt><dd>&#8377;{{ req.refund_value }} started on {{ req.refunded_at|date:"d M Y" }}{% if req.refund_id %} (reference {{ req.refund_id }}){% endif %}</dd></div>{% endif %}
+    {% if req.replacement_awb %}<div><dt>Replacement</dt><dd>{{ req.replacement_courier|default:"Our courier partner" }}, tracking {{ req.replacement_awb }}</dd></div>{% endif %}
+  </dl>
+</div>
+<div class="panel mb-4">
+  <h2 class="h5 mb-3">Progress</h2>
+  <ol class="ret-timeline">
+    {% for e in events %}<li><b>{{ e.label }}</b>{% if e.note %}<span>{{ e.note }}</span>{% endif %}<small>{{ e.created_at|date:"d M Y, H:i" }}</small></li>{% endfor %}
+  </ol>
+</div>
+{% if req.can_withdraw %}
+<form method="post" action="{% url 'account_return_withdraw' req.reference %}" data-confirm="Withdraw this return request?">{% csrf_token %}<button class="btn btn-outline-danger" type="submit">Withdraw request</button></form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% autoescape off %}Welcome, {{ user.first_name|default:"there" }}!
+
+Your email is verified and your account is ready.
+
+- Order our products with cash on delivery
+- Save addresses for faster checkout
+- Track every order and re-order in one tap
+- Review products you have used
+
+Start shopping: {{ shop_url }}
+My account: {{ account_url }}
+
+Credit Lifesciences{% endautoescape %}

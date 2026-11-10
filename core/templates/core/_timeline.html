@@ -1,0 +1,11 @@
+{% if order.status == 'cancelled' %}
+<div class="alert alert-danger mb-0"><i class="bi bi-x-circle"></i> This order has been cancelled. Please call {{ SITE.phones.0.0 }} if you have any questions.</div>
+{% else %}
+<ol class="timeline">
+  {% for key, label in steps %}<li class="{% if key in reached %}done{% endif %} {% if key == order.status %}current{% endif %}"><span></span>{{ label }}</li>{% endfor %}
+</ol>
+{% if order.tracking_note %}<p class="mt-4 mb-0"><i class="bi bi-truck"></i> {{ order.tracking_note }}</p>{% endif %}
+{% if order.awb %}<p class="mt-3 mb-0 small"><i class="bi bi-box-seam"></i> {{ order.courier|default:"Courier" }} &middot; Tracking no. <b>{{ order.awb }}</b>{% if order.tracking_url %} &middot; <a href="{{ order.tracking_url }}" target="_blank" rel="noopener">Track with courier</a>{% endif %}</p>{% endif %}
+{% if order.expected_delivery and order.status != 'delivered' %}<p class="mt-2 mb-0 small"><i class="bi bi-calendar-check"></i> Expected by <b>{{ order.expected_delivery|date:"D, d M" }}</b></p>{% endif %}
+{% with events=order.events.all %}{% if events %}<ul class="list-unstyled small mt-3 mb-0 ev-list">{% for e in events %}<li><b>{{ e.status }}</b>{% if e.location %} &middot; {{ e.location }}{% endif %} <span class="text-muted">{{ e.at|date:"d M, h:i A" }}</span></li>{% endfor %}</ul>{% endif %}{% endwith %}
+{% endif %}

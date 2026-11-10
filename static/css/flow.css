@@ -1,0 +1,44 @@
+/* The sign-in flow (popup and popup-style pages). Flat colours only. */
+.flow { position: relative; }
+.flow section[hidden] { display: none; }
+.flow .auth-icon { margin-bottom: 18px; }
+.flow-title { font-size: 1.6rem; letter-spacing: -.035em; margin-bottom: 8px; }
+.flow-sub { color: var(--muted); margin-bottom: 24px; font-size: .95rem; }
+.flow-sub b { color: var(--ink); font-weight: 500; }
+.flow-legal { font-size: .78rem; color: var(--muted); margin: 18px 0 0; }
+.flow-legal a { text-decoration: underline; text-underline-offset: 3px; }
+.flow-legal i { color: var(--green); margin-right: 4px; }
+.flow-alt { text-align: center; margin: 18px 0 0; font-size: .9rem; }
+.flow-back { display: inline-grid; place-items: center; width: 38px; height: 38px; margin-bottom: 14px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); transition: border-color .2s, color .2s; }
+.flow-back:hover { border-color: var(--green); color: var(--green); }
+.flow-back[hidden] { display: none; }
+.flow .auth-alert[hidden] { display: none; }
+.flow .check-row { margin: 0; }
+
+/* One-time code boxes */
+.otp-boxes { display: flex; gap: 10px; margin-bottom: 20px; }
+.otp-boxes input { flex: 1; min-width: 0; max-width: 60px; height: 58px; text-align: center; font-family: var(--font); font-size: 1.5rem; font-weight: 600; color: var(--ink); background: #fff; border: 1.5px solid var(--line); border-radius: 14px; caret-color: var(--green); transition: border-color .2s, box-shadow .2s; }
+.otp-boxes input:focus { outline: 0; border-color: var(--green); box-shadow: 0 0 0 4px rgba(14, 122, 85, .14); }
+.otp-boxes input:not(:placeholder-shown), .otp-boxes input[value]:not([value=""]) { border-color: #9cd3bb; }
+.otp-boxes.error input { border-color: var(--danger); background: #fffafa; animation: shake .4s; }
+@keyframes shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+.otp-resend { text-align: center; margin: 16px 0 0; font-size: .88rem; color: var(--muted); }
+.otp-resend [data-resend][hidden] { display: none; }
+.reset-fields[hidden] { display: none; }
+
+/* Popup-style page for direct visits */
+.page-auth .site-footer, .page-auth .newsletter, .page-auth .wa-float, .page-auth .to-top { display: none; }
+.auth-stage { position: relative; min-height: calc(100vh - var(--header-h)); display: grid; place-items: center; padding: 40px 16px 64px; background: var(--navy); overflow: hidden; }
+.auth-stage::before, .auth-stage::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .07); pointer-events: none; }
+.auth-stage::before { width: 640px; height: 640px; left: -220px; bottom: -260px; }
+.auth-stage::after { width: 520px; height: 520px; right: -160px; top: -200px; }
+.auth-card2 { position: relative; z-index: 1; width: 100%; max-width: 880px; background: #fff; border-radius: 26px; overflow: hidden; box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .65); }
+.auth-card2 .am-body { max-height: none; }
+.auth-card2 .am-close { text-decoration: none; }
+.am-body .auth-icon.big { margin: 0 auto 18px; }
+.am-body h1.flow-title { font-size: 1.6rem; }
+@media (max-width: 767.98px) { .auth-card2 { border-radius: 20px; } .auth-stage { padding: 20px 12px 40px; } }
+@media (max-width: 380px) { .otp-boxes { gap: 6px; } .otp-boxes input { height: 52px; font-size: 1.3rem; } }
+
+.flow-or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .8rem; margin: 14px 0; }
+.flow-or::before, .flow-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }

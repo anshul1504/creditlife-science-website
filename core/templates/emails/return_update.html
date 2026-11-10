@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">{{ heading }}</h1>
+<p>Hi {{ order.name }},</p>
+<p>{{ message }}</p>
+<p style="margin:0;">Order <b style="color:#101c2b;">{{ order.number }}</b> &middot; {{ req.quantity }} x {{ req.item.product_name }}<br><span style="font-size:13px;color:#667385;">Reason: {{ req.get_reason_display }}</span></p>
+{% if req.staff_note and req.status != 'rejected' %}<p style="margin:16px 0;padding:14px 18px;background:#e6f2ec;border-radius:10px;color:#0a5e42;"><b>Note from us:</b> {{ req.staff_note }}</p>{% endif %}
+<p style="font-size:13px;color:#667385;margin-top:20px;">Questions? Call {{ SITE.phones.0.0 }} or reply to this email.</p>
+{% endblock %}

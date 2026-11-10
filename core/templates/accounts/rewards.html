@@ -1,0 +1,32 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Rewards | Credit Lifesciences{% endblock %}
+{% block account_title %}Credit points &amp; referrals{% endblock %}
+{% block crumb %}<li class="breadcrumb-item active">Rewards</li>{% endblock %}
+{% block account_content %}
+<div class="row g-4 mb-4">
+  <div class="col-md-5">
+    <div class="panel h-100">
+      <span class="muted-label">Your balance</span>
+      <div class="display-6 fw-semibold">{{ balance }} <small class="fs-6 text-muted">points</small></div>
+      <p class="small text-muted mb-0">Worth &#8377;{% widthratio balance 1 shop.point_value %} at checkout. You earn {{ shop.points_per_100 }} points for every &#8377;100 on delivered orders and can pay up to {{ shop.max_points_pct }}% of an order with points.</p>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="panel h-100">
+      <h2 class="h5">Refer a friend</h2>
+      <p class="small">When a friend joins through your link and their first order is delivered, you both get <b>{{ shop.referral_reward }} points</b>.</p>
+      <div class="input-group">
+        <input class="form-control" id="refLink" value="{{ referral_link }}" readonly aria-label="Your referral link">
+        <button class="btn btn-brand" type="button" data-copy="#refLink">Copy</button>
+      </div>
+      <p class="small text-muted mt-2 mb-0">Friends joined: {{ referral_count }}</p>
+    </div>
+  </div>
+</div>
+<div class="panel">
+  <h2 class="h5 mb-3">History</h2>
+  {% for e in entries %}
+  <div class="d-flex justify-content-between border-bottom py-2"><div><b>{{ e.get_kind_display }}</b><br><small class="text-muted">{{ e.note }} &middot; {{ e.created_at|date:"d M Y" }}</small></div><b class="{% if e.points > 0 %}text-success{% endif %}">{{ e.points|stringformat:"+d" }}</b></div>
+  {% empty %}<p class="text-muted mb-0">No activity yet. Points appear here after your first delivered order.</p>{% endfor %}
+</div>
+{% endblock %}

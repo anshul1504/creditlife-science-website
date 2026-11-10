@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}Careers | Credit Lifesciences{% endblock %}
+{% block description %}Career opportunities at Credit Lifesciences: medical representatives, sales, distribution, operations, administration, content and marketing.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Careers</li></ol></nav>
+    <h1 class="reveal">Careers</h1>
+    <p class="reveal" style="--d:.06s">Join a team that is working to make quality healthcare accessible to more communities.</p>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <h2 class="h4">Roles we hire for</h2>
+        <ul class="tick">{% for r in roles %}<li><b>{{ r.title }}</b>{% if r.description %}<br><small class="text-muted">{{ r.description }}</small>{% endif %}</li>{% empty %}<li>No openings are listed right now, but you can still send your CV.</li>{% endfor %}</ul>
+        <p class="small text-muted">Do not see your role? Apply anyway and choose the closest match.</p>
+      </div>
+      <div class="col-lg-7">
+        <form method="post" enctype="multipart/form-data" class="enq-form" novalidate>
+          {% csrf_token %}
+          <h2 class="h4 mb-3">Application form</h2>
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="hp" aria-hidden="true">{{ form.website.label_tag }} {{ form.website }}</div>
+          <div class="row g-3">
+            <div class="col-md-6">{{ form.full_name.label_tag }}{{ form.full_name }}{% for e in form.full_name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.mobile.label_tag }}{{ form.mobile }}{% for e in form.mobile.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}{% for e in form.email.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.location.label_tag }}{{ form.location }}{% for e in form.location.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.position.label_tag }}{{ form.position }}{% for e in form.position.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-md-6">{{ form.experience_years.label_tag }}{{ form.experience_years }}{% for e in form.experience_years.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-12">{{ form.qualification.label_tag }}{{ form.qualification }}{% for e in form.qualification.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+            <div class="col-12">{{ form.resume.label_tag }}{{ form.resume }}{% for e in form.resume.errors %}<div class="err">{{ e }}</div>{% endfor %}<div class="form-note">PDF or Word, up to 5 MB.</div></div>
+            <div class="col-12">{{ form.message.label_tag }}{{ form.message }}</div>
+          </div>
+          <button class="btn btn-brand btn-lg mt-4" type="submit"><span>Submit application</span> <i class="bi bi-send"></i></button>
+          <p class="form-note">We use your details only to process your application. See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

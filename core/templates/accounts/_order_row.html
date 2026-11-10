@@ -1,0 +1,9 @@
+<a class="order-row" href="{% url 'account_order' order.number %}">
+  <div>
+    <b>{{ order.number }}</b>
+    <span>{{ order.created_at|date:"d M Y" }} &middot; {{ order.items.count }} item{{ order.items.count|pluralize }}</span>
+  </div>
+  <span class="status status-{{ order.status }}">{% if order.awaiting_payment %}Payment pending{% else %}{{ order.get_status_display }}{% endif %}</span>
+  <strong>&#8377;{{ order.total }}</strong>
+  <i class="bi bi-chevron-right"></i>
+</a>

@@ -1,0 +1,27 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">{{ heading }}</h1>
+<p>Hi {{ order.name }},</p>
+<p>{{ message }}</p>
+<p style="margin:0;">Order <b style="color:#101c2b;">{{ order.number }}</b></p>
+{% if order.tracking_note and order.status != 'cancelled' %}
+<p style="margin:16px 0;padding:14px 18px;background:#e6f2ec;border-radius:10px;color:#0a5e42;"><b>Update from us:</b> {{ order.tracking_note }}</p>
+{% endif %}
+{% if order.awb and order.status == 'shipped' %}
+<p style="margin:16px 0;font-size:14px;"><b>Courier:</b> {{ order.courier|default:"Courier" }} &middot; <b>Tracking number:</b> {{ order.awb }}{% if order.tracking_url %} &middot; <a href="{{ order.tracking_url }}" style="color:#0e7a55;">Track with courier</a>{% endif %}</p>
+{% endif %}
+{% include "emails/_order_table.html" %}
+{% if invoice_url %}<p style="margin:8px 0;font-size:14px;"><a href="{{ invoice_url }}" style="color:#0e7a55;">Download your tax invoice (PDF)</a></p>{% endif %}
+{% if order.status != 'cancelled' %}
+<p style="margin:24px 0;"><a href="{{ track_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Track my order</a></p>
+{% endif %}
+{% if review_urls %}
+<p style="margin:20px 0 6px;font-weight:600;color:#101c2b;">How did we do?</p>
+<p style="margin:0;font-size:14px;">Your review helps other customers:</p>
+<ul style="padding-left:20px;margin:8px 0;">
+  {% for name, url in review_urls %}<li><a href="{{ url }}" style="color:#0e7a55;">Review {{ name }}</a></li>{% endfor %}
+</ul>
+{% endif %}
+{% if refunded %}<p style="padding:14px 18px;background:#e6f2ec;border-radius:10px;color:#0a5e42;"><b>Refund started:</b> &#8377;{{ order.total }} is being returned to your original payment method. It usually shows up in 5 to 7 business days.</p>{% endif %}
+{% if order.status == 'cancelled' %}<p style="font-size:13px;color:#667385;">If you did not request this cancellation, please call us on {{ SITE.phones.0.0 }}.</p>{% endif %}
+{% endblock %}

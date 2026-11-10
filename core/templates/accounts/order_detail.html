@@ -1,0 +1,48 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Order {{ order.number }} | Credit Lifesciences{% endblock %}
+{% block account_title %}Order {{ order.number }}{% endblock %}
+{% block crumb %}<li class="breadcrumb-item"><a href="{% url 'account_orders' %}">Orders</a></li><li class="breadcrumb-item active">{{ order.number }}</li>{% endblock %}
+{% block account_content %}
+<div class="panel mb-4">
+  <div class="d-flex flex-wrap justify-content-between gap-2 mb-4">
+    <div><span class="muted-label">Placed on</span><div>{{ order.created_at|date:"d M Y, h:i A" }}</div></div>
+    <span class="d-flex gap-2 align-self-start flex-wrap"><span class="status status-{{ order.status }}">{{ order.get_status_display }}</span>{% if order.payment_method == 'online' %}<span class="status status-{{ order.payment_status }}">{{ order.get_payment_status_display }}</span>{% endif %}</span>
+  </div>
+  {% include "core/_timeline.html" %}
+</div>
+<div class="panel mb-4">
+  <h2 class="h5 mb-3">Items</h2>
+  <ul class="mini-items">
+    {% for i in order.items.all %}<li>{% if i.product %}<a href="{{ i.product.get_absolute_url }}"><img src="{% static i.product.image %}" alt="" class="stage-{{ i.product.stage }}"></a>{% endif %}<div><b>{{ i.product_name }}</b><span>{{ i.pack }} &times; {{ i.quantity }} &middot; &#8377;{{ i.unit_price }} each</span></div><em>&#8377;{{ i.line_total }}</em></li>{% endfor %}
+  </ul>
+  <dl class="totals mb-0">
+    <div><dt>Subtotal</dt><dd>&#8377;{{ order.subtotal }}</dd></div>
+    {% if order.bundle_discount %}<div class="disc"><dt>Bundle savings</dt><dd>-&#8377;{{ order.bundle_discount }}</dd></div>{% endif %}
+    {% if order.discount %}<div class="disc"><dt>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</dt><dd>-&#8377;{{ order.discount }}</dd></div>{% endif %}
+    {% if order.points_used %}<div class="disc"><dt>Credit points ({{ order.points_used }})</dt><dd>-&#8377;{{ order.points_discount }}</dd></div>{% endif %}
+    <div><dt>Delivery</dt><dd>{% if order.shipping %}&#8377;{{ order.shipping }}{% else %}Free{% endif %}</dd></div>
+    <div class="total"><dt>Total ({{ order.get_payment_method_display }})</dt><dd>&#8377;{{ order.total }}</dd></div>
+  </dl>
+</div>
+<div class="row g-4 mb-4">
+  <div class="col-md-6"><div class="panel h-100"><h2 class="h5">Delivery address</h2><p class="mb-0">{{ order.name }}<br>{{ order.address|linebreaksbr }}<br>{{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>{{ order.phone }}</p></div></div>
+  <div class="col-md-6"><div class="panel h-100"><h2 class="h5">Need help?</h2><p>Call {{ SITE.phones.0.0 }} or write to <a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a> with your order number.</p><a href="{% url 'policies' %}" class="small">Shipping &amp; returns policy</a></div></div>
+</div>
+{% if returnable or returns %}
+<div class="panel mb-4">
+  <h2 class="h5 mb-3">Damaged goods</h2>
+  {% for r in returns %}<p class="mb-2"><a href="{% url 'account_return' r.reference %}"><b>{{ r.reference }}</b></a> &middot; <b>{{ r.item.product_name }}</b> &times; {{ r.quantity }} <span class="status status-{{ r.status }}">{{ r.get_status_display }}</span>{% if r.staff_note %}<br><small class="text-muted">{{ r.staff_note }}</small>{% endif %}</p>{% endfor %}
+  {% for item, left in returnable %}<a class="btn btn-outline-brand btn-sm me-2 mb-2" href="{% url 'return_new' order.number item.pk %}">Report damaged goods: {{ item.product_name }}</a>{% endfor %}
+</div>
+{% endif %}
+<div class="d-flex flex-wrap gap-3">
+  {% if order.status != 'cancelled' %}<a class="btn btn-outline-brand" href="{% url 'invoice' order.number %}" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Download invoice</a>{% endif %}
+  {% if order.awaiting_payment %}<a class="btn btn-brand" href="{% url 'pay' order.number %}"><i class="bi bi-credit-card"></i> Complete payment</a>{% endif %}
+  <form method="post" action="{% url 'account_order_reorder' order.number %}">{% csrf_token %}<button class="btn btn-brand" type="submit"><i class="bi bi-arrow-repeat"></i> Buy again</button></form>
+  {% if order.can_cancel %}
+  <form method="post" action="{% url 'account_order_cancel' order.number %}" data-confirm="Cancel this order?">{% csrf_token %}<button class="btn btn-outline-danger" type="submit">Cancel order</button></form>
+  {% endif %}
+  <button class="btn btn-outline-brand" type="button" data-print><i class="bi bi-printer"></i> Print</button>
+</div>
+{% endblock %}

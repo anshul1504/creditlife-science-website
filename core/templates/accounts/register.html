@@ -1,0 +1,7 @@
+{% extends "accounts/auth_base.html" %}
+{% block title %}Create account | Credit Lifesciences{% endblock %}
+{% block brand_kicker %}Create your account{% endblock %}
+{% block brand_title %}Shop smarter, in less than a minute.{% endblock %}
+{% block brand_sub %}One account for faster checkout, order tracking, saved addresses and verified reviews. No password needed.{% endblock %}
+{% block auth_head %}{% endblock %}
+{% block auth_body %}{% include "accounts/_flow.html" with flow_start="identify" %}{% endblock %}

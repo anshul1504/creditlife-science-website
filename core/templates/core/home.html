@@ -1,0 +1,189 @@
+{% extends "core/base.html" %}
+{% load static core_extras %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+
+<!-- ====================== 1. Hero: full-screen rotating slides (Admin > Hero slides) ====================== -->
+<section class="theme-hero" aria-label="Credit Lifesciences">
+  <div id="themeCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="false" data-bs-touch="true">
+    <div class="carousel-inner">
+      {% for slide in slides %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image:url('{{ slide.background_url }}')">
+        <div class="hero-shade"></div>
+        <div class="container hero-copy">
+          {% if slide.eyebrow %}<span class="eyebrow-l">{{ slide.eyebrow }}</span>{% endif %}
+          {% if forloop.first %}<h1>{{ slide.headline }}</h1>{% else %}<h2>{{ slide.headline }}</h2>{% endif %}
+          {% if slide.text %}<p>{{ slide.text }}</p>{% endif %}
+          <div class="cta-row">
+            {% if slide.primary_label %}<a class="btn btn-brand btn-lg" href="{{ slide.primary_url }}">{{ slide.primary_label }}</a>{% endif %}
+            {% if slide.secondary_label %}<a class="btn btn-ghost-w btn-lg" href="{{ slide.secondary_url }}">{{ slide.secondary_label }}</a>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="carousel-item active" style="background-image:url('{% static 'img/hero/bg-1.jpg' %}')">
+        <div class="hero-shade"></div>
+        <div class="container hero-copy"><h1>Building Trusted Partnerships. Serving Health.</h1>
+          <div class="cta-row"><a class="btn btn-brand btn-lg" href="{% url 'distributor' %}">Become a Distributor</a><a class="btn btn-ghost-w btn-lg" href="{% url 'products' %}">Explore Our Products</a></div></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if slides|length > 1 %}
+    <div class="carousel-indicators">
+      {% for slide in slides %}<button type="button" data-bs-target="#themeCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>{% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#themeCarousel" data-bs-slide="prev"><i class="bi bi-chevron-left"></i><span class="visually-hidden">Previous</span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#themeCarousel" data-bs-slide="next"><i class="bi bi-chevron-right"></i><span class="visually-hidden">Next</span></button>
+    {% endif %}
+  </div>
+</section>
+
+{% if banners %}
+<section class="promo-banners" aria-label="Announcements">
+  <div class="container"><div class="row g-3">
+    {% for b in banners %}
+    <div class="col-md{% if banners|length == 1 %}-12{% endif %}">
+      <a class="promo" href="{{ b.link|default:'#' }}"{% if b.image %} style="background-image:url('{{ b.image.url }}')"{% endif %}>
+        <span class="promo-text"><b>{{ b.title }}</b>{% if b.subtitle %}<small>{{ b.subtitle }}</small>{% endif %}<em>{{ b.button_text }} <i class="bi bi-arrow-right"></i></em></span>
+      </a>
+    </div>
+    {% endfor %}
+  </div></div>
+</section>
+{% endif %}
+
+<!-- ====================== 2. About ====================== -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6 reveal">
+        <span class="eyebrow">About Credit Lifesciences</span>
+        <h2 class="sec-title">Quality healthcare should be accessible and affordable</h2>
+        <p class="sec-lead">Established in {{ SITE.established }}, Credit Lifesciences has built its journey around a simple belief: quality healthcare should be accessible and affordable. With a growing distribution presence across multiple districts of Uttar Pradesh, the company continues to build trusted business partnerships while working towards wider healthcare accessibility.</p>
+        <ul class="fact-row">
+          <li><b>{{ SITE.years }}+</b><span>years since {{ SITE.established }}</span></li>
+          <li><b>{{ district_counts.active }}</b><span>districts in Uttar Pradesh</span></li>
+          <li><b>2</b><span>systems: Ayurvedic and Allopathic</span></li>
+        </ul>
+        <a href="{% url 'about' %}" class="btn btn-brand">Read our story</a>
+      </div>
+      <div class="col-lg-6 reveal" style="--d:.1s">
+        <div class="brand-panel"><img src="{% static 'img/logo-credit.png' %}" alt="Credit Lifesciences" class="bp-main"><div class="bp-badge"><b>{{ SITE.years }}</b><span>years<br>since {{ SITE.established }}</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== 3. Product portfolio ====================== -->
+<section class="section bg-soft" id="portfolio">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Product portfolio</span>
+      <h2 class="sec-title">Ayurvedic and Allopathic, under one name</h2>
+      <p>Browse by system, ingredient or health problem. Every product page lists its composition, pack size and MRP.</p>
+    </div>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <a class="cat-tile" href="{% url 'products' %}?system=allopathic">
+          <div class="cat-copy"><span class="cat-count">{{ allopathic_count }} product{{ allopathic_count|pluralize }}</span><h3>Allopathic</h3><p>Digestive care, nutrition and more.</p><em>Explore <i class="bi bi-arrow-right"></i></em></div>
+          <div class="cat-thumbs">{% for p in allo_products %}<span>{% picture p.image alt=p.name sizes="120px" lazy=False %}</span>{% endfor %}</div>
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a class="cat-tile cat-tile-alt" href="{% url 'products' %}?system=ayurvedic">
+          <div class="cat-copy"><span class="cat-count">{{ ayurvedic_count }} product{{ ayurvedic_count|pluralize }}</span><h3>Ayurvedic</h3><p>Joint, nerve and muscle care.</p><em>Explore <i class="bi bi-arrow-right"></i></em></div>
+          <div class="cat-thumbs">{% for p in ayur_products %}<span>{% picture p.image alt=p.name sizes="120px" lazy=False %}</span>{% endfor %}</div>
+        </a>
+      </div>
+    </div>
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+      <h3 class="h4 mb-0">Featured products</h3>
+      <a class="link-arrow" href="{% url 'products' %}">View all products <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-4 home-products">
+      {% for p in featured %}<div class="col-6 col-lg-4">{% include "core/_product_card.html" %}</div>{% endfor %}
+    </div>
+    <p class="text-center mt-5 mb-0"><a class="btn btn-outline-brand" href="{% url 'contact' %}?topic=product">Request our product catalogue</a></p>
+  </div>
+</section>
+
+<!-- ====================== 4. Why choose us ====================== -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow">Why partner with us</span><h2 class="sec-title">Why choose Credit Lifesciences?</h2></div>
+    <div class="why-grid">
+      {% for h in why %}<div class="value-card"><i class="bi {{ h.icon }}"></i><h3>{{ h.title }}</h3><p>{{ h.text }}</p></div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if home_message %}
+<!-- ====================== 5. Founder message ====================== -->
+<section class="section bg-soft">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-3 text-center">
+        {% if home_message.photo %}<img src="{{ home_message.photo.url }}" alt="{{ home_message.name }}" class="person-photo">{% else %}<span class="person-initials" aria-hidden="true">{{ home_message.initials }}</span>{% endif %}
+      </div>
+      <div class="col-lg-9">
+        <span class="eyebrow">{{ home_message.heading }}</span>
+        <blockquote class="home-quote">&ldquo;{{ home_message.extract }}&rdquo;</blockquote>
+        <p class="mb-3"><b>{{ home_message.name }}</b><br><small class="text-muted">{{ home_message.designation }}</small></p>
+        <a class="btn btn-outline-brand" href="{% url 'about' %}#message-{{ home_message.pk }}">Read the full message</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ====================== 6. Distribution network ====================== -->
+<section class="section" id="network">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow">Distribution network</span><h2 class="sec-title">Growing Our Network. Expanding Healthcare Access.</h2>
+      <p>Present in {{ district_counts.active }} districts of Uttar Pradesh today, with plans to expand across India.</p></div>
+    <ul class="district-chips">
+      {% for d in districts %}<li class="net-{{ d.status }}"><i></i>{{ d.name }}</li>{% endfor %}
+    </ul>
+    <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+      <a class="btn btn-brand" href="{% url 'network' %}">View Distribution Network</a>
+      <a class="btn btn-outline-brand" href="{% url 'distributor' %}">Become a Distributor</a>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== 7. Contact with the enquiry form ====================== -->
+<section class="section bg-soft" id="contact">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow">Get in touch</span><h2 class="sec-title">Contact / business enquiry</h2>
+      <p>General, product, order and business partnership enquiries, and complaints or feedback, are all welcome.</p></div>
+    <div class="row g-4 g-lg-5">
+      <div class="col-lg-5">
+        <div class="contact-cards">
+          <a class="cc" href="tel:{{ SITE.phones.0.1 }}"><i class="bi bi-telephone-fill"></i><div><span>Phone</span><b>{{ SITE.phones.0.0 }}</b></div></a>
+          <a class="cc cc-wa" href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i><div><span>WhatsApp</span><b>{{ SITE.phones.0.0 }}</b></div></a>
+          <a class="cc" href="mailto:{{ SITE.email }}"><i class="bi bi-envelope-fill"></i><div><span>General</span><b>{{ SITE.email }}</b></div></a>
+          <a class="cc" href="mailto:{{ SITE.sales_email }}"><i class="bi bi-briefcase-fill"></i><div><span>Sales / business</span><b>{{ SITE.sales_email }}</b></div></a>
+          <div class="cc"><i class="bi bi-geo-alt-fill"></i><div><span>Registered office</span><b class="small-b">{{ SITE.address }}</b></div></div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <form method="post" action="{% url 'contact' %}" class="enq-form home-enq" novalidate>
+          {% csrf_token %}
+          <div class="hp" aria-hidden="true">{{ enquiry_form.website.label_tag }} {{ enquiry_form.website }}</div>
+          <div class="row g-3">
+            <div class="col-md-6">{{ enquiry_form.name.label_tag }}{{ enquiry_form.name }}</div>
+            <div class="col-md-6">{{ enquiry_form.phone.label_tag }}{{ enquiry_form.phone }}</div>
+            <div class="col-md-6">{{ enquiry_form.email.label_tag }}{{ enquiry_form.email }}</div>
+            <div class="col-md-6">{{ enquiry_form.topic.label_tag }}{{ enquiry_form.topic }}</div>
+            <div class="col-12">{{ enquiry_form.city.label_tag }}{{ enquiry_form.city }}</div>
+            <div class="col-12">{{ enquiry_form.message.label_tag }}{{ enquiry_form.message }}</div>
+          </div>
+          <input type="hidden" name="kind" value="customer">
+          <button class="btn btn-brand btn-lg mt-4" type="submit"><span>Send enquiry</span> <i class="bi bi-send"></i></button>
+          <p class="form-note">We use your details only to respond. See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

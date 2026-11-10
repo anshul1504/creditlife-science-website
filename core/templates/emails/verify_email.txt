@@ -1,0 +1,10 @@
+{% autoescape off %}Hi {{ user.first_name|default:"there" }},
+
+Thanks for creating a Credit Lifesciences account. Please confirm your email address:
+
+{{ verify_url }}
+
+This link is valid for 3 days. If you did not create this account, you can ignore this email.
+
+Credit Lifesciences
+{{ SITE.phones.0.0 }} | {{ SITE.email }}{% endautoescape %}

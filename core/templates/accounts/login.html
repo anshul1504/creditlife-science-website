@@ -1,0 +1,7 @@
+{% extends "accounts/auth_base.html" %}
+{% block title %}Sign in | Credit Lifesciences{% endblock %}
+{% block brand_kicker %}Welcome back{% endblock %}
+{% block brand_title %}Good to see you again.{% endblock %}
+{% block brand_sub %}Sign in to check out faster, follow your orders and reorder your essentials in one tap.{% endblock %}
+{% block auth_head %}{% endblock %}
+{% block auth_body %}{% include "accounts/_flow.html" with flow_start="identify" %}{% endblock %}

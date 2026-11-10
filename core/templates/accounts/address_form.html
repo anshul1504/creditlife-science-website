@@ -1,0 +1,12 @@
+{% extends "accounts/layout.html" %}
+{% block title %}{% if editing %}Edit{% else %}Add{% endif %} address | Credit Lifesciences{% endblock %}
+{% block account_title %}{% if editing %}Edit address{% else %}Add address{% endif %}{% endblock %}
+{% block crumb %}<li class="breadcrumb-item"><a href="{% url 'account_addresses' %}">Addresses</a></li><li class="breadcrumb-item active">{% if editing %}Edit{% else %}New{% endif %}</li>{% endblock %}
+{% block account_content %}
+<form method="post" class="panel" novalidate>
+  {% csrf_token %}
+  {% include "accounts/_fields.html" %}
+  <button class="btn btn-brand btn-lg" type="submit">Save address</button>
+  <a class="btn btn-outline-brand btn-lg ms-2" href="{% url 'account_addresses' %}">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "accounts/layout.html" %}
+{% block title %}My account | Credit Lifesciences{% endblock %}
+{% block account_title %}Hello, {{ display_name }}{% endblock %}
+{% block account_content %}
+<div class="acct-kpis mb-4">
+  <a class="stat-tile" href="{% url 'account_orders' %}"><b>{{ order_count }}</b><span>Total orders</span></a>
+  <a class="stat-tile" href="{% url 'account_orders' %}?status=placed"><b>{{ live_orders }}</b><span>In progress</span></a>
+  <a class="stat-tile" href="{% url 'account_returns' %}"><b>{{ open_returns }}</b><span>Open returns</span></a>
+  <div class="stat-tile"><b>&#8377;{{ spent }}</b><span>Total purchases</span></div>
+</div>
+
+{% if EMAIL_UNVERIFIED %}
+<div class="note-box mb-4"><i class="bi bi-envelope-exclamation"></i><span>Your email is not verified yet. Check your inbox for the link, or <form method="post" action="{% url 'resend_verification' %}" class="d-inline">{% csrf_token %}<button class="link-btn" type="submit">send it again</button></form>.</span></div>
+{% endif %}
+
+<div class="panel mb-4 acct-setup">
+  <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 mb-0">Complete your account</h2><span class="small text-muted">{{ progress }}% done</span></div>
+  <div class="acct-bar"><i style="width:{{ progress }}%"></i></div>
+  <ul class="acct-steps">
+    {% for label, ok, url in steps %}<li class="{% if ok %}done{% endif %}"><i class="bi {% if ok %}bi-check-square-fill{% else %}bi-square{% endif %}"></i>{% if ok %}{{ label }}{% else %}<a href="{{ url }}">{{ label }}</a>{% endif %}</li>{% endfor %}
+  </ul>
+</div>
+
+<div class="panel mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="mb-0 h5">Recent orders</h2><a href="{% url 'account_orders' %}" class="small">View all</a></div>
+  {% for order in recent_orders %}
+    {% include "accounts/_order_row.html" %}
+  {% empty %}
+    <p class="mb-3 text-muted">You have not placed any orders yet.</p>
+    <a class="btn btn-brand" href="{% url 'products' %}">Browse products</a>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6"><div class="panel h-100">
+    <h2 class="h5">Business</h2>
+    {% with p=user.profile %}
+    {% if p.business_name %}<p class="mb-2"><b>{{ p.business_name }}</b><br>{{ p.get_account_type_display }}<br>GSTIN {{ p.gstin }}</p>{% else %}<p class="text-muted mb-2">Add your GST and drug licence details to order as a business.</p>{% endif %}
+    <p class="mb-2"><span class="status status-{{ p.kyc_status }}">{{ p.get_kyc_status_display }}</span></p>
+    <a href="{% url 'account_business' %}" class="small">{% if p.business_name %}View or update{% else %}Start verification{% endif %}</a>
+    {% endwith %}
+  </div></div>
+  <div class="col-md-6"><div class="panel h-100">
+    <h2 class="h5">Default address</h2>
+    {% if address %}<p class="mb-2">{{ address.name }}<br>{{ address.address }}<br>{{ address.city }}, {{ address.state }} - {{ address.pincode }}<br>{{ address.phone }}</p><a href="{% url 'address_edit' address.pk %}" class="small">Edit</a>
+    {% else %}<p class="text-muted mb-2">No address saved yet.</p><a href="{% url 'address_new' %}" class="small">Add an address</a>{% endif %}
+  </div></div>
+</div>
+{% endblock %}

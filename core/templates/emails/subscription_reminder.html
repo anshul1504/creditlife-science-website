@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">Your next delivery is coming up</h1>
+<p>Hi {{ sub.user.first_name|default:"there" }},</p>
+<p>Your Subscribe &amp; Save order will be placed on <b>{{ sub.next_date|date:"D, d M Y" }}</b>:</p>
+<p style="margin:12px 0;padding:14px 18px;background:#f4f1e8;border-radius:10px;"><b style="color:#101c2b;">{{ sub.product.name }}</b> ({{ sub.product.pack }}) &times; {{ sub.quantity }}<br>&#8377;{{ unit }} each, total &#8377;{{ total }} &middot; pay on delivery</p>
+<p style="margin:24px 0;"><a href="{{ account_url }}" style="background:#0e7a55;color:#ffffff;text-decoration:none;font-weight:500;padding:13px 28px;border-radius:10px;display:inline-block;">Skip, pause or change</a></p>
+<p style="font-size:12px;color:#667385;">If you do nothing, we will place the order for you.</p>
+{% endblock %}

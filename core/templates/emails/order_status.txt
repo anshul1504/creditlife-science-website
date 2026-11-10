@@ -1,0 +1,21 @@
+{% autoescape off %}Hi {{ order.name }},
+
+{{ heading }}. {{ message }}
+
+Order: {{ order.number }}
+{% if order.tracking_note and order.status != 'cancelled' %}Update from us: {{ order.tracking_note }}
+{% endif %}
+{% if order.awb and order.status == 'shipped' %}Courier: {{ order.courier }} - tracking number {{ order.awb }}{% if order.tracking_url %} ({{ order.tracking_url }}){% endif %}
+{% endif %}{% for i in items %}{{ i.quantity }} x {{ i.product_name }} ({{ i.pack }}) - Rs {{ i.line_total }}
+{% endfor %}
+Total ({{ order.get_payment_method_display }}): Rs {{ order.total }}
+{% if refunded %}Refund started: Rs {{ order.total }} is being returned to your original payment method (usually 5 to 7 business days).
+{% endif %}
+{% if invoice_url %}Tax invoice (PDF): {{ invoice_url }}
+{% endif %}{% if order.status != 'cancelled' %}Track your order: {{ track_url }}
+{% endif %}{% if review_urls %}
+How did we do? Leave a review:
+{% for name, url in review_urls %}- {{ name }}: {{ url }}
+{% endfor %}{% endif %}
+Credit Lifesciences
+{{ SITE.phones.0.0 }} | {{ SITE.email }}{% endautoescape %}

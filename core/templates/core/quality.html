@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% block title %}Quality & Compliance | Credit Lifesciences{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">Quality</li></ol></nav>
+    <h1 class="reveal">Quality &amp; compliance</h1>
+    <p class="reveal" style="--d:.08s">How we keep every pack clear, traceable and safe to use.</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4 reveal"><div class="value-card"><i class="bi bi-building-check"></i><h3>Licensed manufacturing</h3><p>Our products are manufactured in India under valid manufacturing licences. The licence number is printed on the pack.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal" style="--d:.08s"><div class="value-card"><i class="bi bi-upc-scan"></i><h3>Traceable batches</h3><p>Every pack carries its batch number, manufacturing date, expiry date and MRP so each unit can be traced.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal" style="--d:.16s"><div class="value-card"><i class="bi bi-translate"></i><h3>Clear, bilingual labelling</h3><p>Composition, directions and cautions appear in English and Hindi to support correct use.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="value-card"><i class="bi bi-prescription2"></i><h3>Responsible communication</h3><p>Prescription medicines are presented to healthcare professionals only, without promotional claims to the public.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal" style="--d:.08s"><div class="value-card"><i class="bi bi-thermometer-snow"></i><h3>Storage guidance</h3><p>Each product page lists storage conditions so quality is maintained from the stockist to the shelf.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal" style="--d:.16s"><div class="value-card"><i class="bi bi-megaphone"></i><h3>Report a side effect</h3><p>If you experience an unexpected effect, contact your doctor and write to us so we can follow up.</p></div></div>
+    </div>
+
+    <div class="cta-card light reveal mt-5">
+      <div><h2>Have a quality query or feedback?</h2><p>Write to <a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a> or call {{ SITE.phones.0.0 }}. We respond to every message.</p></div>
+      <a href="{% url 'contact' %}" class="btn btn-brand btn-lg">Contact us</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

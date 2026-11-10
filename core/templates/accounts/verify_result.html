@@ -1,0 +1,23 @@
+{% extends "accounts/auth_base.html" %}
+{% block title %}{% if ok %}Email verified{% else %}Link expired{% endif %} | Credit Lifesciences{% endblock %}
+{% block brand_kicker %}{% if ok %}You are all set{% else %}Verification{% endif %}{% endblock %}
+{% block brand_title %}{% if ok %}Welcome to the family.{% else %}Let's get you a fresh link.{% endif %}{% endblock %}
+{% block brand_sub %}{% if ok %}Your account is ready. Explore the range and check out in a few taps.{% else %}Verification links are valid for 3 days and can only be used with the latest email we sent.{% endif %}{% endblock %}
+{% block auth_icon %}<div class="auth-icon big {% if ok %}ok{% else %}warn{% endif %}"><i class="bi {% if ok %}bi-patch-check-fill{% else %}bi-clock-history{% endif %}"></i></div>{% endblock %}
+{% block auth_title %}{% if ok %}{% if first_time %}Email verified{% else %}Already verified{% endif %}{% else %}This link is invalid or has expired{% endif %}{% endblock %}
+{% block auth_sub %}{% if ok %}Thank you, {{ verified_user.first_name|default:"there" }}. {% if first_time %}We have sent you a welcome email.{% else %}Your email address was already confirmed.{% endif %}{% else %}Request a new verification link and try again.{% endif %}{% endblock %}
+{% block auth_body %}
+{% if ok %}
+<div class="d-grid gap-2">
+  <a class="btn btn-brand btn-lg" href="{% url 'products' %}">Start shopping</a>
+  <a class="btn btn-outline-brand btn-lg" href="{% if user.is_authenticated %}{% url 'account' %}{% else %}{% url 'login' %}{% endif %}">{% if user.is_authenticated %}Go to my account{% else %}Sign in{% endif %}</a>
+</div>
+{% else %}
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'resend_verification' %}">{% csrf_token %}<button class="btn btn-brand btn-lg w-100" type="submit">Send me a new link</button></form>
+{% else %}
+<a class="btn btn-brand btn-lg w-100" href="{% url 'login' %}?next={% url 'account_verify_pending' %}">Sign in to request a new link</a>
+{% endif %}
+<p class="auth-foot"><a href="{% url 'contact' %}">Need help? Contact us</a></p>
+{% endif %}
+{% endblock %}

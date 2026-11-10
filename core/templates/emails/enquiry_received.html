@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block body %}
+<h1 style="margin:0 0 12px;font-size:22px;color:#101c2b;">We received your enquiry</h1>
+<p>Hi {{ enquiry.name }}, thank you for contacting Credit Lifesciences. A member of our team will call you back on <b>{{ enquiry.phone }}</b> shortly.</p>
+{% if enquiry.message %}<p style="margin:18px 0 4px;font-weight:600;color:#101c2b;">Your message</p><p style="margin:0;padding:14px 18px;background:#f6f3ec;border-radius:10px;">{{ enquiry.message|linebreaksbr }}</p>{% endif %}
+<p style="margin-top:24px;font-size:13px;color:#667385;">If your question is urgent, call us on {{ SITE.phones.0.0 }}.</p>
+{% endblock %}

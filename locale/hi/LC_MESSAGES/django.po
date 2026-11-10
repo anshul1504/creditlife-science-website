@@ -1,0 +1,182 @@
+# Hindi translation for the Credit Lifesciences store.
+# DRAFT: written without a native-speaker review. Have a Hindi-speaking team member read it before launch.
+# Compile with:  python scripts/compile_messages.py
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: hi\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "About us"
+msgstr "हमारे बारे में"
+
+msgid "About"
+msgstr "परिचय"
+
+msgid "Add"
+msgstr "जोड़ें"
+
+msgid "Addresses"
+msgstr "पते"
+
+msgid "Batch &amp; expiry on every pack"
+msgstr "हर पैक पर बैच और एक्सपायरी"
+
+msgid "Bundle savings"
+msgstr "कॉम्बो बचत"
+
+msgid "Bundles &amp; combos"
+msgstr "बंडल और कॉम्बो"
+
+msgid "Cart"
+msgstr "कार्ट"
+
+msgid "Cash on delivery available"
+msgstr "कैश ऑन डिलीवरी उपलब्ध"
+
+msgid "Cash on delivery"
+msgstr "कैश ऑन डिलीवरी"
+
+msgid "Contact / business enquiries"
+msgstr "संपर्क / व्यापारिक पूछताछ"
+
+msgid "Contact"
+msgstr "संपर्क"
+
+msgid "Continue shopping"
+msgstr "खरीदारी जारी रखें"
+
+msgid "Cookie policy"
+msgstr "कुकी नीति"
+
+msgid "Delivery"
+msgstr "डिलीवरी"
+
+msgid "Free"
+msgstr "मुफ़्त"
+
+msgid "Grievance Officer"
+msgstr "शिकायत अधिकारी"
+
+msgid "Health library"
+msgstr "स्वास्थ्य लाइब्रेरी"
+
+msgid "Health tips and offers, straight to your inbox"
+msgstr "स्वास्थ्य सुझाव और ऑफ़र, सीधे आपके इनबॉक्स में"
+
+msgid "Help"
+msgstr "सहायता"
+
+msgid "Home"
+msgstr "होम"
+
+msgid "Inclusive of all taxes. Choose cash on delivery or pay online at checkout."
+msgstr "सभी करों सहित। चेकआउट पर कैश ऑन डिलीवरी चुनें या ऑनलाइन भुगतान करें।"
+
+msgid "Looks like you haven't added anything yet."
+msgstr "लगता है आपने अभी तक कुछ नहीं जोड़ा है।"
+
+msgid "Medical disclaimer"
+msgstr "चिकित्सीय अस्वीकरण"
+
+msgid "My account"
+msgstr "मेरा खाता"
+
+msgid "My orders"
+msgstr "मेरे ऑर्डर"
+
+msgid "OK, got it"
+msgstr "ठीक है"
+
+msgid "One useful email a month. No spam, unsubscribe in one click."
+msgstr "महीने में एक काम का ईमेल। कोई स्पैम नहीं, एक क्लिक में सदस्यता रद्द करें।"
+
+msgid "Order summary"
+msgstr "ऑर्डर सारांश"
+
+msgid "Out of stock"
+msgstr "स्टॉक में नहीं"
+
+msgid "Prescription medicine"
+msgstr "प्रिस्क्रिप्शन की दवा"
+
+msgid "Privacy"
+msgstr "गोपनीयता"
+
+msgid "Proceed to checkout"
+msgstr "चेकआउट पर जाएँ"
+
+msgid "Quality"
+msgstr "गुणवत्ता"
+
+msgid "Remove"
+msgstr "हटाएँ"
+
+msgid "Resend verification email"
+msgstr "सत्यापन ईमेल दोबारा भेजें"
+
+msgid "Sale"
+msgstr "सेल"
+
+msgid "Search medicines &amp; products"
+msgstr "दवाएँ और उत्पाद खोजें"
+
+msgid "Shipping &amp; returns"
+msgstr "शिपिंग और रिटर्न"
+
+msgid "Shop all products"
+msgstr "सभी उत्पाद देखें"
+
+msgid "Shop"
+msgstr "खरीदारी"
+
+msgid "Sign in"
+msgstr "साइन इन"
+
+msgid "Sign out"
+msgstr "साइन आउट"
+
+msgid "Start shopping"
+msgstr "खरीदारी शुरू करें"
+
+msgid "Stay in the loop"
+msgstr "जुड़े रहें"
+
+msgid "Subscribe"
+msgstr "सदस्यता लें"
+
+msgid "Subtotal"
+msgstr "उप-योग"
+
+msgid "Terms of sale"
+msgstr "बिक्री की शर्तें"
+
+msgid "Total"
+msgstr "कुल"
+
+msgid "Track order"
+msgstr "ऑर्डर ट्रैक करें"
+
+msgid "Track your order"
+msgstr "अपना ऑर्डर ट्रैक करें"
+
+msgid "View cart"
+msgstr "कार्ट देखें"
+
+msgid "We use only the cookies needed to run the shop (cart and sign-in)."
+msgstr "हम केवल वही कुकी इस्तेमाल करते हैं जो दुकान चलाने के लिए ज़रूरी हैं (कार्ट और साइन-इन)।"
+
+msgid "Wishlist"
+msgstr "विशलिस्ट"
+
+msgid "Your cart is empty"
+msgstr "आपका कार्ट खाली है"
+
+msgid "Your cart"
+msgstr "आपका कार्ट"
+
+msgid "Your email address"
+msgstr "आपका ईमेल पता"
+
+msgid "Free delivery above &#8377;%(amt)s"
+msgstr "&#8377;%(amt)s से ऊपर के ऑर्डर पर मुफ़्त डिलीवरी"

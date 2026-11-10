@@ -1,0 +1,66 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; Inventory</div>{% endblock %}
+{% block content %}
+<style>
+  .inv-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px}
+  .inv-kpi div{background:#fff;border:1px solid #e3e9ef;border-radius:12px;padding:14px 16px}
+  .inv-kpi small{display:block;color:#667385}.inv-kpi b{font-size:1.6rem}
+  .inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin-bottom:22px}
+  .inv-card{background:#fff;border:1px solid #e3e9ef;border-radius:14px;padding:18px}
+  .inv-card h3{font-size:1rem;font-weight:600;margin:0 0 12px}
+  .inv-card p{margin:0 0 10px}.inv-card label{display:block;font-size:.8rem;color:#667385;margin-bottom:2px}
+  .inv-card input,.inv-card select{width:100%;padding:8px 10px;border:1px solid #d5dde6;border-radius:8px}
+  .inv-card .err{color:#b3261e;font-size:.8rem;display:block}
+  .inv-card button{background:#0e7a55;color:#fff;border:0;border-radius:8px;padding:9px 18px;font-weight:500}
+  table.inv{width:100%;background:#fff;border:1px solid #e3e9ef;border-collapse:separate;border-spacing:0;margin-bottom:22px}
+  table.inv th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:#667385;padding:10px 12px;border-bottom:1px solid #e3e9ef;text-align:left}
+  table.inv td{padding:10px 12px;border-bottom:1px solid #eef2f6}
+  .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.75rem;font-weight:500}
+  .pill.ok{background:#e6f2ec;color:#0b6a49}.pill.low{background:#fff3d6;color:#8a5a00}.pill.out{background:#fde4e1;color:#b3261e}
+  .pill.expiring{background:#fde9d9;color:#a14b00}.pill.untracked{background:#eef2f6;color:#667385}
+</style>
+<div class="inv-kpi">
+  <div><small>Units on hand</small><b>{{ units }}</b></div>
+  <div><small>Out of stock</small><b>{{ counts.out }}</b></div>
+  <div><small>Low stock (up to {{ threshold }})</small><b>{{ counts.low }}</b></div>
+  <div><small>Expiring soon</small><b>{{ counts.expiring }}</b></div>
+</div>
+
+<div class="inv-grid">
+  <form method="post" class="inv-card">{% csrf_token %}
+    <h3>Receive new stock</h3>
+    {{ receive.non_field_errors }}
+    {% for f in receive %}<p>{{ f.label_tag }}{{ f }}{% for e in f.errors %}<span class="err">{{ e }}</span>{% endfor %}</p>{% endfor %}
+    <button name="receive" value="1" type="submit">Add stock</button>
+  </form>
+  <form method="post" class="inv-card">{% csrf_token %}
+    <h3>Correct or write off stock</h3>
+    {% for f in adjust %}<p>{{ f.label_tag }}{{ f }}{% for e in f.errors %}<span class="err">{{ e }}</span>{% endfor %}</p>{% endfor %}
+    <button name="adjust" value="1" type="submit">Update stock</button>
+  </form>
+</div>
+
+<h2 class="dh">Stock by product</h2>
+<table class="inv">
+  <tr><th>Product</th><th>Status</th><th>On hand</th><th>Next expiry</th><th>Batches</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td><a href="{% url 'admin:core_product_change' r.product.pk %}">{{ r.product.name }}</a></td>
+    <td><span class="pill {{ r.state }}">{% if r.state == 'ok' %}In stock{% elif r.state == 'low' %}Low{% elif r.state == 'out' %}Out of stock{% elif r.state == 'expiring' %}Expiring soon{% else %}Not tracked{% endif %}</span></td>
+    <td>{% if r.state == 'untracked' %}-{% else %}{{ r.on_hand }}{% endif %}</td>
+    <td>{{ r.next_expiry|date:"d M Y"|default:"-" }}</td>
+    <td>{% for b in r.batches %}{{ b.batch_no }} ({{ b.quantity }}){% if not forloop.last %}, {% endif %}{% empty %}-{% endfor %}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2 class="dh">Latest stock movements</h2>
+<table class="inv">
+  <tr><th>When</th><th>Product</th><th>Batch</th><th>Change</th><th>Why</th><th>Reference</th><th>By</th></tr>
+  {% for m in movements %}
+  <tr><td>{{ m.created_at|date:"d M, H:i" }}</td><td>{{ m.product.name }}</td><td>{{ m.batch.batch_no|default:"-" }}</td><td><b>{{ m.change }}</b></td><td>{{ m.get_reason_display }}{% if m.note %} &middot; {{ m.note }}{% endif %}</td><td>{{ m.reference|default:"-" }}</td><td>{{ m.user|default:"system" }}</td></tr>
+  {% empty %}<tr><td colspan="7">No movements recorded yet.</td></tr>
+  {% endfor %}
+</table>
+<p><a href="{% url 'admin:core_stockmovement_changelist' %}">Full stock history</a> &middot; <a href="{% url 'admin:core_batch_changelist' %}">All batches</a></p>
+{% endblock %}

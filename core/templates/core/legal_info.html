@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}Legal &amp; Regulatory Information | Credit Lifesciences{% endblock %}
+{% block description %}Registrations and licences held by Credit Lifesciences: wholesale drug licence (Forms 20B and 21B) and GST registration.{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Legal &amp; Regulatory Information</h1></div></section>
+<section class="section pt-4"><div class="container legal">
+  {% include "core/_draft_notice.html" %}
+  <p>These are the registrations and licences of Credit Lifesciences. They are statutory registrations and are not quality certifications.</p>
+  <div class="table-responsive"><table class="table">
+    <thead><tr><th>Registration</th><th>Number</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td>Wholesale Drug Licence, Form 20B</td><td>UP5120B001001</td><td>Drugs other than those specified in Schedules C, C(1) and X. Issued 04 Sep 2023, valid till 03 Sep 2028 (retention fee due on or before that date).</td></tr>
+      <tr><td>Wholesale Drug Licence, Form 21B</td><td>UP5121B001001</td><td>Drugs specified in Schedules C and C(1), excluding Schedule X. Issued 04 Sep 2023, valid till 03 Sep 2028.</td></tr>
+      <tr><td>GST registration</td><td>{{ SELLER.gstin }}</td><td>Trade name: Credit Lifesciences.</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Registered office</h2>
+  <p>{{ SITE.address }}</p>
+  <p class="small text-muted">Licensed premises (as printed on the licences): Ground Floor, KH-58, Basdeva Kunwar, Amari Bazar, Harraiya, Basti, Uttar Pradesh - 272155.</p>
+</div></section>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Checkout | Credit Lifesciences{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item"><a href="{% url 'cart' %}">Cart</a></li><li class="breadcrumb-item active">Checkout</li></ol></nav>
+    <h1>Checkout</h1>
+    {% if not user.is_authenticated %}<p>Have an account? <a href="{% url 'login' %}?next={{ request.path|urlencode }}">Sign in</a> for faster checkout and order history, or continue as a guest.</p>{% endif %}
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    <form method="post" id="checkoutForm" novalidate>
+      {% csrf_token %}
+      <div class="row g-4 g-xl-5">
+        <div class="col-lg-7">
+          <div class="panel">
+            <h2><span>1</span> Delivery details</h2>
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+            {% if addresses %}
+            <div class="saved-addr" data-saved-addresses>
+              <span class="muted-label mb-2">Your saved addresses</span>
+              <div class="row g-2">
+                {% for a in addresses %}
+                <div class="col-md-6">
+                  <button type="button" class="addr-pick" data-name="{{ a.name }}" data-phone="{{ a.phone }}" data-address="{{ a.address }}" data-city="{{ a.city }}" data-state="{{ a.state }}" data-pincode="{{ a.pincode }}">
+                    <b>{{ a.label }}{% if a.is_default %} <em>Default</em>{% endif %}</b>
+                    <span>{{ a.name }}, {{ a.address|truncatechars:48 }}, {{ a.city }} {{ a.pincode }}</span>
+                  </button>
+                </div>
+                {% endfor %}
+              </div>
+              <hr>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+              <div class="col-md-6">{{ form.name.label_tag }}{{ form.name }}{% for e in form.name.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-md-6">{{ form.phone.label_tag }}{{ form.phone }}{% for e in form.phone.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-12">{{ form.email.label_tag }}{{ form.email }}{% for e in form.email.errors %}<div class="err">{{ e }}</div>{% endfor %}<div class="form-note mt-1">We email your order confirmation and shipping updates here (optional).</div></div>
+              <div class="col-12">{{ form.address.label_tag }}{{ form.address }}{% for e in form.address.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-md-4">{{ form.pincode.label_tag }}{{ form.pincode }}{% for e in form.pincode.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-md-4">{{ form.city.label_tag }}{{ form.city }}{% for e in form.city.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-md-4">{{ form.state.label_tag }}{{ form.state }}{% for e in form.state.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+              <div class="col-12">{{ form.notes.label_tag }}{{ form.notes }}</div>
+              {% if user.is_authenticated %}
+              <div class="col-12"><label class="check-row">{{ form.save_address }} <span>{{ form.save_address.label }}</span></label></div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="panel mt-4">
+            <h2><span>2</span> Payment</h2>
+            <div class="pay-options">
+              {% for radio in form.payment_method %}
+              <label class="pay-opt">{{ radio.tag }}<span><b>{{ radio.choice_label }}</b>{% if radio.data.value == 'cod' %}<small>Pay in cash when your order is delivered.</small>{% endif %}</span></label>
+              {% endfor %}
+              {% if not ordering_open %}
+              <div class="alert alert-info mb-0"><b>Online ordering opens shortly.</b> Until then, please place your order with our sales team on <a href="{{ cart.whatsapp_url }}" target="_blank" rel="noopener">WhatsApp</a>, or send an <a href="{% url 'contact' %}?topic=order">order enquiry</a>.</div>
+              {% endif %}
+            </div>
+            {% for e in form.payment_method.errors %}<div class="err">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <aside class="summary sticky">
+            <h2>Order summary</h2>
+            <ul class="mini-items">
+              {% for row in cart.items %}
+              <li><img src="{% static row.product.image %}" alt="" class="stage-{{ row.product.stage }}"><div><b>{{ row.product.name }}</b><span>{{ row.product.pack }} &times; {{ row.qty }}</span></div><em>&#8377;{{ row.line }}</em></li>
+              {% endfor %}
+            </ul>
+            {% include "core/_coupon_box.html" %}
+            {% include "core/_points_box.html" %}
+            <dl>
+              <div><dt>Subtotal</dt><dd>&#8377;{{ cart.subtotal }}</dd></div>
+            {% if cart.bundle_discount %}<div class="disc"><dt>Bundle savings</dt><dd>-&#8377;{{ cart.bundle_discount }}</dd></div>{% endif %}
+            {% if cart.discount %}<div class="disc"><dt>Coupon ({{ cart.coupon.code }})</dt><dd>-&#8377;{{ cart.discount }}</dd></div>{% endif %}
+            {% if cart.points_discount %}<div class="disc"><dt>Credit points ({{ cart.points_used }})</dt><dd>-&#8377;{{ cart.points_discount }}</dd></div>{% endif %}
+              <div><dt>Delivery</dt><dd>{% if cart.shipping %}&#8377;{{ cart.shipping }}{% else %}<span class="free">Free</span>{% endif %}</dd></div>
+              <div class="total"><dt>Total payable</dt><dd>&#8377;{{ cart.total }}</dd></div>
+            </dl>
+            <button class="btn btn-brand btn-lg w-100" type="submit" {% if not ordering_open %}disabled{% endif %}><span>Place order</span> <i class="bi bi-lock"></i></button>
+            <p class="sum-note mt-3">By placing your order you agree to our <a href="{% url 'policies' %}">shipping &amp; returns policy</a> and <a href="{% url 'privacy' %}">privacy notice</a>.</p>
+            <a class="back-link" href="{% url 'cart' %}"><i class="bi bi-arrow-left"></i> Edit cart</a>
+          </aside>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

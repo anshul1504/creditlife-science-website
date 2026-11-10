@@ -1,0 +1,229 @@
+{% load i18n static core_extras %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Credit Lifesciences | Serving Health{% endblock %}</title>
+  <meta name="description" content="{% block description %}Credit Lifesciences, established 2009. Ayurvedic and Allopathic pharmaceutical products with a growing distribution network across Uttar Pradesh. Become an authorised distributor.{% endblock %}">
+  <meta name="theme-color" content="#0B2239">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Credit Lifesciences">
+  <meta property="og:title" content="{% block og_title %}Credit Lifesciences | Reliable, Efficient, Pure &amp; Sure{% endblock %}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% block og_image %}{% static 'img/og-default.jpg' %}{% endblock %}">
+  <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  {% block robots %}{% endblock %}
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="{% static 'img/icon-192.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% url 'manifest' %}">
+  <meta name="theme-color" content="#0e7a55">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="preload" href="{% static 'vendor/poppins/poppins-latin-400.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'vendor/poppins/poppins-latin-600.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link href="{% static 'vendor/poppins/poppins.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/site.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/store.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/premium.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/auth.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/shop.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/modal.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  <link href="{% static 'css/flow.css' %}?v={{ ASSET_V }}" rel="stylesheet">
+  {% block head_extra %}{% endblock %}
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"Credit Lifesciences","foundingDate":"{{ SITE.established }}","address":{"@type":"PostalAddress","streetAddress":"KH. 58, Basdeva Kunwar, Harraiya","addressLocality":"Basti","addressRegion":"Uttar Pradesh","postalCode":"272155","addressCountry":"IN"},"url":"{{ request.scheme }}://{{ request.get_host }}/","logo":"{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo-credit.png' %}","email":"{{ SITE.email }}","telephone":"{{ SITE.phones.0.1 }}"}
+  </script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<a class="visually-hidden-focusable skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="announce">
+    <div class="container d-flex justify-content-between align-items-center">
+      <span class="announce-msg" data-announce>
+        {% for a in ANNOUNCEMENTS %}<span class="ann {% if forloop.first %}on{% endif %}"><i class="bi bi-megaphone"></i> {% if a.link %}<a href="{{ a.link }}">{{ a.text }}</a>{% else %}{{ a.text }}{% endif %}</span>
+        {% empty %}<span class="ann on"><i class="bi bi-people-fill"></i> <a href="{% url 'distributor' %}">Building Trusted Partnerships. Serving Health. Become a Distributor</a></span>{% endfor %}
+      </span>
+      <span class="d-none d-lg-flex gap-4">
+        <a href="tel:{{ SITE.phones.0.1 }}"><i class="bi bi-telephone"></i> {{ SITE.phones.0.0 }}</a>
+        <a href="mailto:{{ SITE.sales_email }}"><i class="bi bi-envelope"></i> {{ SITE.sales_email }}</a>
+        <span class="top-social">{% for label, icon, url in SITE.social %}{% if url %}<a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label }}"><i class="bi {{ icon }}"></i></a>{% endif %}{% endfor %}</span>
+      </span>
+    </div>
+  </div>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand brand" href="{% url 'home' %}" aria-label="Credit Lifesciences home">
+        <img src="{% static 'img/logo-credit.png' %}" alt="" width="56" height="44">
+        <span class="brand-text"><strong>Credit Lifesciences</strong><small>{{ SITE.tagline }}</small></span>
+      </a>
+      <div class="collapse navbar-collapse order-3 order-lg-1" id="nav">
+        <form class="nav-search order-lg-2" action="{% url 'search' %}" role="search">
+          <i class="bi bi-search"></i>
+          <input type="search" name="q" placeholder="{% trans "Search medicines &amp; products" %}" value="{{ query|default:'' }}" aria-label="Search products" autocomplete="off">
+        </form>
+        <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-1 order-lg-1">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'products' or request.resolver_match.url_name == 'product_detail' %}active{% endif %}" href="{% url 'products' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">{% trans "Shop" %}</a>
+            <div class="dropdown-menu mega">
+              <div class="mega-grid">
+                {% for p in NAV_PRODUCTS %}
+                <a class="mega-item" href="{{ p.get_absolute_url }}">
+                  <img src="{% static p.image %}" alt="" class="stage-{{ p.stage }}" loading="lazy">
+                  <span><b>{{ p.name }}</b><em>{% if p.sellable %}&#8377;{{ p.effective_price }}{% if p.mrp > p.effective_price %} <s>&#8377;{{ p.mrp }}</s>{% endif %}{% else %}{% trans "Prescription medicine" %}{% endif %}</em></span>
+                </a>
+                {% endfor %}
+              </div>
+              <a class="mega-foot" href="{% url 'products' %}">{% trans "Shop all products" %} <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">{% trans "About" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'network' %}active{% endif %}" href="{% url 'network' %}">Distribution Network</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'distributor' %}active{% endif %}" href="{% url 'distributor' %}">Become a Distributor</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">{% trans "Contact" %}</a></li>
+        </ul>
+      </div>
+      <div class="nav-actions order-2 order-lg-2 ms-auto ms-lg-3">
+        {% get_current_language as CUR_LANG %}
+        <form method="post" action="{% url 'set_language' %}" class="lang-switch">
+          {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <input type="hidden" name="language" value="{% if CUR_LANG == 'hi' %}en{% else %}hi{% endif %}">
+          <button type="submit" class="acct-btn lang-btn" title="{% if CUR_LANG == 'hi' %}Switch to English{% else %}हिन्दी में देखें{% endif %}" aria-label="{% if CUR_LANG == 'hi' %}Switch to English{% else %}हिन्दी में देखें{% endif %}"><i class="bi bi-translate"></i><span>{% if CUR_LANG == 'hi' %}EN{% else %}हिं{% endif %}</span></button>
+        </form>
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+          <button class="acct-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="My account">
+            <i class="bi bi-person-circle"></i><span class="d-none d-xl-inline">{{ user.first_name|default:"Account"|truncatechars:12 }}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li class="dropdown-header">{{ user.email }}</li>
+            <li><a class="dropdown-item" href="{% url 'account' %}"><i class="bi bi-speedometer2"></i> {% trans "My account" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'account_orders' %}"><i class="bi bi-box-seam"></i> {% trans "My orders" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'account_wishlist' %}"><i class="bi bi-heart"></i> {% trans "Wishlist" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'account_addresses' %}"><i class="bi bi-geo-alt"></i> {% trans "Addresses" %}</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right"></i> {% trans "Sign out" %}</button></form></li>
+          </ul>
+        </div>
+        {% else %}
+        <a class="acct-btn" href="{% url 'login' %}?next={{ request.path|urlencode }}"><i class="bi bi-person"></i><span class="d-none d-xl-inline">{% trans "Sign in" %}</span></a>
+        {% endif %}
+        <a class="cart-link" href="{% url 'cart' %}" aria-label="Cart">
+          <i class="bi bi-bag"></i>
+          <span class="cart-count" data-cart-count {% if not CART_COUNT %}hidden{% endif %}>{{ CART_COUNT }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="bi bi-list fs-2"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  {% if EMAIL_UNVERIFIED and request.resolver_match.url_name != 'account_verify_pending' %}
+  <div class="verify-bar">
+    <div class="container d-flex flex-wrap align-items-center justify-content-center gap-2 gap-md-3">
+      <span><i class="bi bi-envelope-exclamation"></i> Please verify your email address ({{ user.email }}).</span>
+      <form method="post" action="{% url 'resend_verification' %}" class="m-0">{% csrf_token %}<button class="link-btn light" type="submit">{% trans "Resend verification email" %}</button></form>
+    </div>
+  </div>
+  {% endif %}
+  {% if messages %}
+  <div class="container flash-wrap">
+    {% for m in messages %}<div class="flash flash-{{ m.tags }}" role="status"><i class="bi bi-info-circle"></i> {{ m }}</div>{% endfor %}
+  </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-logos">
+          <img src="{% static 'img/logo-credit.png' %}" alt="Credit Lifesciences" height="52">
+        </div>
+        <p class="mt-4 footer-note">Credit Lifesciences, established {{ SITE.established }}. Ayurvedic and Allopathic pharmaceutical products, with a growing distribution network across Uttar Pradesh and plans to expand across India.</p>
+        <p class="footer-tag">{{ SITE.tagline }}</p>
+        <div class="social-row" aria-label="Social media">
+          {% for label, icon, url in SITE.social %}{% if url %}<a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label }}"><i class="bi {{ icon }}"></i></a>{% endif %}{% endfor %}
+          <a href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Company</h6>
+        <ul class="list-unstyled">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">{% trans "About us" %}</a></li>
+          <li><a href="{% url 'products' %}">Products</a></li>
+          <li><a href="{% url 'network' %}">Distribution Network</a></li>
+          <li><a href="{% url 'distributor' %}">Become a Distributor</a></li>
+          <li><a href="{% url 'careers' %}">Careers</a></li>
+          <li><a href="{% url 'faqs' %}">FAQs</a></li>
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6>Legal &amp; policies</h6>
+        <ul class="list-unstyled">
+          <li><a href="{% url 'legal_info' %}">Legal &amp; Regulatory Information</a></li>
+          <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}">Terms &amp; Conditions</a></li>
+          <li><a href="{% url 'disclaimer' %}">Disclaimer</a></li>
+          <li><a href="{% url 'policies' %}">{% trans "Shipping &amp; returns" %}</a></li>
+          <li><a href="{% url 'cookies' %}">{% trans "Cookie policy" %}</a></li>
+          <li><a href="{% url 'grievance' %}">{% trans "Grievance Officer" %}</a></li>
+          {% if SHOP.consumer_features %}<li><a href="{% url 'bundles' %}">{% trans "Bundles &amp; combos" %}</a></li>{% endif %}
+          <li><a href="{% url 'blog' %}">{% trans "Health library" %}</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3">
+        <h6>{% trans "Contact" %}</h6>
+        <ul class="list-unstyled contact-list">
+          {% for label, tel in SITE.phones %}<li><i class="bi bi-telephone"></i><a href="tel:{{ tel }}">{{ label }}</a></li>{% endfor %}
+          <li><i class="bi bi-whatsapp"></i><a href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener">WhatsApp {{ SITE.phones.0.0 }}</a></li>
+          <li><i class="bi bi-envelope"></i><a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a></li>
+          <li><i class="bi bi-briefcase"></i><a href="mailto:{{ SITE.sales_email }}">{{ SITE.sales_email }}</a></li>
+          <li><i class="bi bi-geo-alt"></i>{{ SITE.address }}</li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="footer-legal">
+      <p>Product information on this website is for general awareness and is not a substitute for professional medical advice. Always consult a registered medical practitioner. Prescription (Rx) medicines are listed for healthcare professionals and the pharmaceutical trade and are not sold to the public.</p>
+      <div class="footer-bottom">
+        <p class="mb-0">&copy; {% now "Y" %} {{ SITE.name }}. All rights reserved. {{ SITE.tagline }}.</p>
+        <p class="mb-0 dev-credit">Design &amp; Developed by <a href="https://www.thewebfix.in" target="_blank" rel="noopener">The Webfix</a> (<a href="https://www.thewebfix.in" target="_blank" rel="noopener">www.thewebfix.in</a>)</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<nav class="social-rail" aria-label="Social media">
+  {% for label, icon, url in SITE.social %}{% if url %}<a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label }}" title="{{ label }}" class="sr-{{ icon|cut:'bi-' }}"><i class="bi {{ icon }}"></i></a>{% endif %}{% endfor %}
+  <a href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp" class="sr-whatsapp"><i class="bi bi-whatsapp"></i></a>
+</nav>
+<a class="wa-float" href="https://wa.me/{{ SITE.whatsapp }}?text=Hello%20Credit%20Lifesciences%2C%20I%20would%20like%20to%20know%20more." target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+<button class="to-top" type="button" data-to-top hidden aria-label="Back to top"><i class="bi bi-arrow-up"></i></button>
+<div class="cart-toast" id="cartToast" role="status" aria-live="polite" hidden>
+  <i class="bi bi-check-circle-fill"></i><span data-toast-msg></span><a href="{% url 'cart' %}" data-toast-link>{% trans "View cart" %}</a>
+</div>
+
+<div class="cookie-bar" id="cookieBar" role="region" aria-label="Cookie notice" hidden>
+  <p class="mb-0">{% trans "We use only the cookies needed to run the shop (cart and sign-in)." %} <a href="{% url 'cookies' %}">{% trans "Cookie policy" %}</a></p>
+  <button type="button" class="btn btn-brand btn-sm" data-cookie-ok>{% trans "OK, got it" %}</button>
+</div>
+
+{% block auth_modal %}{% include "core/_auth_modal.html" %}{% endblock %}
+
+<script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/site.js' %}?v={{ ASSET_V }}"></script>
+<script src="{% static 'js/auth.js' %}?v={{ ASSET_V }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

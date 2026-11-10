@@ -1,0 +1,109 @@
+{% extends "core/base.html" %}
+{% load static core_extras %}
+{% block title %}About Us | Credit Lifesciences{% endblock %}
+{% block description %}About Credit Lifesciences: established in {{ SITE.established }}, messages from our Founder and Director, vision, mission, values and our commitment to quality and affordable healthcare.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">About Us</li></ol></nav>
+    <h1 class="reveal">About Credit Lifesciences</h1>
+    <p class="reveal" style="--d:.08s">{{ SITE.years }} years since {{ SITE.established }}, working to make quality healthcare accessible and affordable.</p>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+    {% include "core/_draft_notice.html" %}
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-7 reveal">
+        <span class="eyebrow dark">Company overview</span>
+        <h2>Quality healthcare, built through partnerships</h2>
+        {{ SITE.overview|rich }}
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="{% url 'products' %}" class="btn btn-brand">Our products</a>
+          <a href="{% url 'distributor' %}" class="btn btn-outline-brand">Become a Distributor</a>
+        </div>
+      </div>
+      <div class="col-lg-5 reveal" style="--d:.1s">
+        <div class="brand-panel"><img src="{% static 'img/logo-credit.png' %}" alt="Credit Lifesciences" class="bp-main"><div class="bp-badge"><b>{{ SITE.years }}</b><span>years<br>since {{ SITE.established }}</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if principles %}
+<section class="section bg-soft">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow dark">What we stand for</span><h2>Our guiding principles</h2></div>
+    <div class="why-grid">
+      {% for h in principles %}<div class="value-card"><i class="bi {{ h.icon }}"></i><h3>{{ h.title }}</h3><p>{{ h.text }}</p></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% for m in messages_list %}
+<section class="section {% cycle '' 'bg-soft' %}" id="message-{{ m.pk }}">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="person-card reveal">
+          {% if m.photo %}<img src="{{ m.photo.url }}" alt="{{ m.name }}" class="person-photo">{% else %}<span class="person-initials" aria-hidden="true">{{ m.initials }}</span>{% endif %}
+          <h3>{{ m.name }}</h3>
+          <p>{{ m.designation }}</p>
+        </div>
+      </div>
+      <div class="col-lg-8 reveal" style="--d:.08s">
+        <span class="eyebrow dark">{{ m.heading }}</span>
+        {% if m.subheading %}<h2>{{ m.subheading }}</h2>{% endif %}
+        <div class="message-body">{{ m.body|rich }}</div>
+        <p class="message-sign"><b>{{ m.name }}</b><br><span>{{ m.designation }}</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{% if timeline %}
+<section class="section">
+  <div class="container" style="max-width:860px">
+    <span class="eyebrow dark">Our journey since {{ SITE.established }}</span>
+    <h2>How we have grown</h2>
+    <ol class="timeline-list">
+      {% for t in timeline %}<li><b>{{ t.period }}</b><span>{{ t.text }}</span></li>{% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+<section class="section bg-soft">
+  <div class="container">
+    <div class="row g-4">
+      {% if SITE.vision %}<div class="col-md-6 reveal"><div class="value-card h-100"><i class="bi bi-eye"></i><h3>Vision</h3><p>{{ SITE.vision }}</p></div></div>{% endif %}
+      {% if SITE.mission %}<div class="col-md-6 reveal" style="--d:.1s"><div class="value-card h-100"><i class="bi bi-bullseye"></i><h3>Mission</h3>
+        <ul class="tick mb-0">{% for line in SITE.mission %}<li>{{ line }}</li>{% endfor %}</ul></div></div>{% endif %}
+    </div>
+  </div>
+</section>
+
+{% if values %}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow dark">What guides us</span><h2>Core values</h2></div>
+    <div class="why-grid values-grid">
+      {% for h in values %}<div class="value-card"><i class="bi {{ h.icon }}"></i><h3>{{ h.title }}</h3><p>{{ h.text }}</p></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section bg-soft" id="quality">
+  <div class="container" style="max-width:860px">
+    <span class="eyebrow dark">Commitment to quality &amp; affordable healthcare</span>
+    <h2>Our commitment</h2>
+    <p>We are committed to product quality, consistency and affordability, and to standing against low-quality products in the market. Our business licences are listed on the <a href="{% url 'legal_info' %}">Legal &amp; Regulatory Information</a> page.</p>
+    <div class="d-flex flex-wrap gap-3 mt-3"><a href="{% url 'distributor' %}" class="btn btn-brand">Become a Distributor</a><a href="{% url 'contact' %}" class="btn btn-outline-brand">Contact us</a></div>
+  </div>
+</section>
+{% include "core/_cta_band.html" %}
+{% endblock %}

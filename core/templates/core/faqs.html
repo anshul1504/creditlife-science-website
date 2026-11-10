@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}FAQs | Credit Lifesciences{% endblock %}
+{% block description %}Answers about becoming a Credit Lifesciences distributor, minimum purchase, documents, ordering, payment and support.{% endblock %}
+{% block content %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{% for q, a in items %}{"@type":"Question","name":"{{ q|escapejs }}","acceptedAnswer":{"@type":"Answer","text":"{{ a|escapejs }}"}}{% if not forloop.last %},{% endif %}{% endfor %}]}</script>
+<section class="page-hero">
+  <div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li><li class="breadcrumb-item active">FAQs</li></ol></nav>
+    <h1 class="reveal">Frequently asked questions</h1>
+  </div>
+</section>
+<section class="section pt-4">
+  <div class="container" style="max-width:860px">
+    {% include "core/_draft_notice.html" %}
+    <div class="accordion faq-acc" id="faqAcc">
+      {% for q, a in items %}
+      <div class="accordion-item">
+        <h2 class="accordion-header"><button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#q{{ forloop.counter }}">{{ q }}</button></h2>
+        <div id="q{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAcc"><div class="accordion-body">{{ a }}</div></div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-4">More questions? <a href="{% url 'contact' %}">Contact us</a> or <a href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener">message us on WhatsApp</a>.</p>
+  </div>
+</section>
+{% include "core/_cta_band.html" %}
+{% endblock %}
